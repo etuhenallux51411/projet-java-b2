@@ -1,18 +1,19 @@
+package proto;
+
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 
-public class ButtonUser extends JButton implements ActionListener {
+public class BackButton extends JButton implements ActionListener
+{
     private MenuPanel menuPanel;
 
-    public ButtonUser(MenuPanel menuPanel) {
-        super("User");
+    public BackButton(MenuPanel menuPanel) {
+        super("Back");
         this.menuPanel = menuPanel;
         addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent e) {
-        menuPanel.displayUserWindow();
+        menuPanel.previousWindow();
     }
 }
-

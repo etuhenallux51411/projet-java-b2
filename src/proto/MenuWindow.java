@@ -1,5 +1,5 @@
-import java.awt.*;
-import java.awt.event.*;
+package proto;
+
 import javax.swing.*;
 
 

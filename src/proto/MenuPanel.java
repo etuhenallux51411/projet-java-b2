@@ -1,7 +1,7 @@
+package proto;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.Stack;
 
 public class MenuPanel extends JPanel {
 
