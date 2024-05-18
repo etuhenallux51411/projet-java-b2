@@ -1,8 +1,8 @@
-package main.exception;
+package main.exceptionPackage;
 
-public class ConnectionAccessException extends Exception {
+public class ConnectionDataAccessException extends Exception {
     private String error;
-    public ConnectionAccessException(String e) {
+    public ConnectionDataAccessException(String e) {
         setError(e);
     }
 
