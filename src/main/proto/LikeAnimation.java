@@ -1,3 +1,5 @@
+package main.proto;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -39,7 +41,7 @@ public class LikeAnimation extends JFrame {
         interactionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         // Bouton "Like"
-        heartIcon = new ImageIcon(getClass().getResource("like.png"));
+        heartIcon = new ImageIcon(getClass().getResource("proto/like.png"));
         likeButton = new JButton(heartIcon);
         likeButton.setContentAreaFilled(false);
         likeButton.setFocusPainted(false);
@@ -57,7 +59,7 @@ public class LikeAnimation extends JFrame {
         interactionPanel.add(likeLabel);
 
         // Bouton "Comment"
-        commentIcon = new ImageIcon(getClass().getResource("comment.png"));
+        commentIcon = new ImageIcon(getClass().getResource("proto/comment.png"));
         commentButton = new JButton(commentIcon);
         commentButton.setContentAreaFilled(false);
         commentButton.setFocusPainted(false);
