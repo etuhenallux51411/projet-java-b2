@@ -1,4 +1,4 @@
-package proto;
+package main.proto;
 
 import javax.swing.*;
 import java.awt.*;
