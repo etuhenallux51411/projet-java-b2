@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class ConnectionAccess {
     private static String URL = "jdbc:mysql://localhost:3306/social_network";
     private static String USER = "root";
-    private static String PASSWORD = "tesdt1234";
+    private static String PASSWORD = "test1234";
     private static Connection connection;
 
     private static void getConnection() throws ConnectionAccessException {
