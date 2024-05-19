@@ -12,16 +12,14 @@ public class ConnectionDataAccess {
     private static String PASSWORD = "test1234";
     private static Connection connection;
 
-    private static void getConnection() throws ConnectionDataAccessException {
-        try {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (SQLException e) {
-            throw new ConnectionDataAccessException(e.getMessage());
-        }
-    }
-
     public static Connection getInstance() throws ConnectionDataAccessException {
-        if (connection == null) getConnection();
+        if (connection == null) {
+            try {
+                connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            } catch (SQLException e) {
+                throw new ConnectionDataAccessException(e.getMessage());
+            }
+        }
         return connection;
     }
 }
