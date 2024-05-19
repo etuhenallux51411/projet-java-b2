@@ -40,7 +40,6 @@ public class AddUserPanel extends JPanel implements ActionListener {
 
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
-
         addField(gbc, "Email", email = new JTextField(TEXT_FIELD_COLUMNS), 1);
         addField(gbc, "Username", username = new JTextField(TEXT_FIELD_COLUMNS), 2);
         addField(gbc, "Password", password = new JPasswordField(TEXT_FIELD_COLUMNS), 3);
