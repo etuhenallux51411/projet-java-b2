@@ -11,20 +11,41 @@ public class MainWindow extends JFrame {
     private static final int X_BOUNDS = (SCREEN_SIZE.width - FRAME_WIDTH) / 2;
     private static final int Y_BOUNDS = (SCREEN_SIZE.height - FRAME_HEIGHT) / 2;
 
-    private WelcomePanel welcomePanel;
+    private JPanel homePanel;
+    private JPanel addUserPanel;
+    private JPanel listingPanel;
     private MenuBar menuBar;
 
     public MainWindow() {
         super(WINDOW_TITLE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         setBounds(X_BOUNDS, Y_BOUNDS, FRAME_WIDTH, FRAME_HEIGHT);
 
-        setLayout(new BorderLayout());
-
-        welcomePanel = new WelcomePanel(this);
+        homePanel = new HomePanel();
+        addUserPanel = new AddUserPanel();
+        listingPanel = new ListingPanel();
         menuBar = new MenuBar(this);
 
+        switchPanel(homePanel);
         setVisible(true);
+    }
+
+    public void switchPanel(JPanel panel) {
+        getContentPane().removeAll();
+        getContentPane().add(panel);
+        revalidate();
+        repaint();
+    }
+
+    public JPanel getHomePanel() {
+        return homePanel;
+    }
+
+    public JPanel getAddUserPanel() {
+        return addUserPanel;
+    }
+
+    public JPanel getListingPanel() {
+        return listingPanel;
     }
 }

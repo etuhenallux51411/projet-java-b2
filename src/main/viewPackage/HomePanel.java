@@ -3,13 +3,10 @@ package main.viewPackage;
 import javax.swing.*;
 import java.awt.*;
 
-public class WelcomePanel extends JPanel {
+public class HomePanel extends JPanel {
     private JLabel welcomeText;
-    private MainWindow mainWindow;
 
-    public WelcomePanel(MainWindow mainWindow){
-        this.mainWindow = mainWindow;
-
+    public HomePanel(){
         welcomeText = new JLabel(
                 "<html><body><div color='black'><center>Bienvenue dans l'application de simulant un réseau social </center><br/" +
                         "<p>Voici les fonctionnalités de base :</p>" +
@@ -22,7 +19,8 @@ public class WelcomePanel extends JPanel {
                         "<p></p></div></body></html>"
         );
 
+        setLayout(new BorderLayout());
         welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
-        mainWindow.add(welcomeText, BorderLayout.CENTER);
+        add(welcomeText, BorderLayout.CENTER);
     }
 }

@@ -5,31 +5,31 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuBar implements ActionListener {
-    private MainWindow mainWindow;
-    private JMenuBar menuBar;
-    private JMenu menu;
-    private JMenuItem home;
-    private JMenuItem add;
-    private JMenuItem listing;
-    private JMenuItem exit;
+    private final MainWindow mainWindow;
+    private final JMenuBar menuBar;
+    private final JMenu menu;
+    private final JMenuItem home;
+    private final JMenuItem add;
+    private final JMenuItem listing;
+    private final JMenuItem exit;
 
     public MenuBar(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
 
         menuBar = new JMenuBar();
 
-        menu = new JMenu("test");
+        menu = new JMenu("Menu");
 
-        home = new JMenuItem("Accueil");
+        home = new JMenuItem("Retour à l'acceuil");
         home.addActionListener(this);
 
-        add = new JMenuItem("Ajouter");
+        add = new JMenuItem("Ajouter un utilisateur");
         add.addActionListener(this);
 
-        listing = new JMenuItem("Listing");
+        listing = new JMenuItem("Liste des utilisateurs");
         listing.addActionListener(this);
 
-        exit = new JMenuItem("Quitter");
+        exit = new JMenuItem("Quitter le programme");
         exit.addActionListener(this);
 
         menu.add(home);
@@ -46,11 +46,11 @@ public class MenuBar implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == home) {
-//            mainWindow.showWelcomePanel();
-//        } else if (e.getSource() == add) {
-//            mainWindow.showAddPanel();
-//        } else if (e.getSource() == listing) {
-//            mainWindow.showListingPanel();
+            mainWindow.switchPanel(mainWindow.getHomePanel());
+        } else if (e.getSource() == add) {
+            mainWindow.switchPanel(mainWindow.getAddUserPanel());
+        } else if (e.getSource() == listing) {
+            mainWindow.switchPanel(mainWindow.getListingPanel());
         } else if (e.getSource() == exit) {
             System.exit(0);
         }
