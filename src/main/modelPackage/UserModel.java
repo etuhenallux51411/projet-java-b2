@@ -1,10 +1,12 @@
 package main.modelPackage;
 
+import java.util.Date;
+
 public class UserModel {
     private String email;
     private String username;
     private String password;
-    private String dateOfBirth;
+    private Date dateOfBirth;
     private char gender;
     private String streetAndNumber;
     private String phoneNumber;
@@ -37,11 +39,11 @@ public class UserModel {
         this.password = password;
     }
 
-    public String getDateOfBirth() {
+    public Date getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(String dateOfBirth) {
+    public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -54,7 +56,7 @@ public class UserModel {
     }
 
     public String getStreetAndNumber() {
-        return streetAndNumber;
+        return this.streetAndNumber;
     }
 
     public void setStreetAndNumber(String streetAndNumber) {
@@ -62,7 +64,7 @@ public class UserModel {
     }
 
     public String getPhoneNumber() {
-        return phoneNumber;
+        return this.phoneNumber;
     }
 
     public void setPhoneNumber(String phoneNumber) {
@@ -70,7 +72,7 @@ public class UserModel {
     }
 
     public String getBio() {
-        return bio;
+        return this.bio;
     }
 
     public void setBio(String bio) {
