@@ -1,5 +1,6 @@
 package main.viewPackage;
 
+import main.exceptionPackage.LocalityException;
 import main.modelPackage.UserModel;
 import main.dataAccessPackage.ConnectionDataAccess;
 import main.exceptionPackage.ConnectionDataAccessException;
@@ -45,11 +46,11 @@ public class ListingPanel extends JPanel implements ActionListener {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-        buttonAdd = new JButton("Add User");
+        buttonAdd = new JButton("Ajouter un utilisateur");
         buttonAdd.addActionListener(this);
 
-        buttonUpdate = new JButton("Update User");
-        buttonDelete = new JButton("Delete User");
+        buttonUpdate = new JButton("Modifier un utilisateur");
+        buttonDelete = new JButton("Supprimer un utilisateur");
 
         buttonPanel.add(buttonAdd);
         buttonPanel.add(buttonUpdate);
@@ -79,9 +80,9 @@ public class ListingPanel extends JPanel implements ActionListener {
         if (e.getSource() == buttonAdd) {
             if (addUserPanel == null) {
                 try {
-                    this.addUserPanel = new AddUserPanel();
+                    this.addUserPanel = new AddUserPanel(mainWindow);
                     mainWindow.switchPanel(addUserPanel);
-                } catch (CountriesDAOException | ConnectionDataAccessException ex) {
+                } catch (CountriesDAOException | ConnectionDataAccessException | LocalityException ex) {
                     mainWindow.displayError(ex.toString());
                 }
             } else {
