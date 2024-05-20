@@ -16,7 +16,9 @@ public class MainWindow extends JFrame {
     private JPanel listingPanel;
     private JPanel tacheMetierPanel;
 
-    private JPanel researchPanel;
+    private JPanel researchPrivateMessage;
+    private JPanel researchLike;
+    private JPanel researchCommunity;
     private MenuBar menuBar;
 
     public MainWindow() {
@@ -29,7 +31,9 @@ public class MainWindow extends JFrame {
         listingPanel = new ListingPanel();
         tacheMetierPanel = new TacheMetierPanel();
         menuBar = new MenuBar(this);
-        researchPanel = new ResearchPanel();
+        researchPrivateMessage = new ResearchPrivateMessage();
+        researchLike = new ResearchLike();
+        researchCommunity = new ResearchCommunity();
         switchPanel(homePanel);
         setVisible(true);
     }
@@ -55,7 +59,16 @@ public class MainWindow extends JFrame {
 
     public JPanel getTacheMetierPanel() {return tacheMetierPanel;}
 
-    public JPanel getResearchPanel() {return new ResearchPanel();}
+
+    public JPanel getResearchPrivateMessage() {
+        return researchPrivateMessage;
+    }
+    public JPanel getResearchLike() {
+        return researchLike;
+    }
+    public JPanel getResearchCommunity() {
+        return researchCommunity;
+    }
 
 
 }
