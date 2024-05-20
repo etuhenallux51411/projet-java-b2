@@ -3,6 +3,7 @@ package main.viewPackage;
 import main.modelPackage.UserModel;
 import main.dataAccessPackage.ConnectionDataAccess;
 import main.exceptionPackage.ConnectionDataAccessException;
+import main.exceptionPackage.CountriesDAOException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,14 +14,17 @@ import java.util.ArrayList;
 
 public class ListingPanel extends JPanel implements ActionListener {
 
+    private MainWindow mainWindow;
     private JTable tableUsers;
     private ArrayList<UserModel> users = new ArrayList<>();
     private String[] columnNames;
     private JButton buttonUpdate;
     private JButton buttonDelete;
     private JButton buttonAdd;
+    private JPanel addUserPanel;
 
-    public ListingPanel() {
+    public ListingPanel(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
         setLayout(new BorderLayout());
 
         // Top label
@@ -73,8 +77,16 @@ public class ListingPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == buttonAdd) {
-            MainWindow mainWindow = (MainWindow) SwingUtilities.getWindowAncestor(this);
-            mainWindow.switchPanel(mainWindow.getAddUserPanel());
+            if (addUserPanel == null) {
+                try {
+                    this.addUserPanel = new AddUserPanel();
+                    mainWindow.switchPanel(addUserPanel);
+                } catch (CountriesDAOException | ConnectionDataAccessException ex) {
+                    mainWindow.displayError(ex.toString());
+                }
+            } else {
+                mainWindow.switchPanel(addUserPanel);
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ public class UserManager {
         setUserDAO(new UserDAOImpl());
     }
 
-    private void setUserDAO(UserDAO dao) throws ConnectionDataAccessException {
+    private void setUserDAO(UserDAO dao) {
         this.userDAO = dao;
     }
 

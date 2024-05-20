@@ -4,10 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.*;
-import java.util.ArrayList;
-import main.dataAccessPackage.ConnectionDataAccess;
+
+import main.controllerPackage.CountriesController;
 import main.exceptionPackage.ConnectionDataAccessException;
+import main.exceptionPackage.CountriesDAOException;
 
 public class AddUserPanel extends JPanel implements ActionListener {
     private String[] GENDER_CHOICE = {"Male", "Female", "Other"};
@@ -26,7 +26,11 @@ public class AddUserPanel extends JPanel implements ActionListener {
     private JComboBox<String> gender;
     private Dimension textFieldSize = new JTextField(TEXT_FIELD_COLUMNS).getPreferredSize();
 
-    public AddUserPanel() {
+    private CountriesController countriesController;
+
+    public AddUserPanel() throws CountriesDAOException, ConnectionDataAccessException {
+        countriesController = new CountriesController();
+
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);  // Padding between components
@@ -52,23 +56,9 @@ public class AddUserPanel extends JPanel implements ActionListener {
         gender.setPreferredSize(textFieldSize);
         addField(gbc, "Gender", gender, 8);
 
-        // Country field populated from the database
-        try {
-            Connection connection = ConnectionDataAccess.getInstance();
-            String sqlInstruction = "SELECT name FROM country";
-            Statement preparedStatement = connection.createStatement();
-            ResultSet resultSet = preparedStatement.executeQuery(sqlInstruction);
-            ArrayList<String> countries = new ArrayList<>();
-
-            while (resultSet.next()) {
-                countries.add(resultSet.getString("name"));
-            }
-            country = new JComboBox<>(countries.toArray(new String[0]));
-            country.setPreferredSize(textFieldSize);
-            addField(gbc, "Country", country, 9);
-        } catch (ConnectionDataAccessException | SQLException e) {
-            e.printStackTrace();
-        }
+        country = new JComboBox<>(countriesController.getCountries().toArray(new String[0]));
+        country.setPreferredSize(textFieldSize);
+        addField(gbc, "Country", country, 9);
 
         addField(gbc, "Admin user", isAdmin = new JCheckBox(), 10);
 

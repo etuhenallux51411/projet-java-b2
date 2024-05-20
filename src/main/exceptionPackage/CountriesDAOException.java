@@ -1,9 +1,9 @@
 package main.exceptionPackage;
 
-public class ConnectionDataAccessException extends Exception {
+public class CountriesDAOException extends Exception {
     private String error;
 
-    public ConnectionDataAccessException(String e) {
+    public CountriesDAOException(String e) {
         setError(e);
     }
 
@@ -12,6 +12,6 @@ public class ConnectionDataAccessException extends Exception {
     }
 
     public String toString() {
-        return "Erreur lors de la connexion : " + error;
+        return "Erreur lors de la récupération des pays : " + error;
     }
 }

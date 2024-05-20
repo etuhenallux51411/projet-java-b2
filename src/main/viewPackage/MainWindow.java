@@ -15,7 +15,6 @@ public class MainWindow extends JFrame {
     private static final int Y_BOUNDS = (SCREEN_SIZE.height - FRAME_HEIGHT) / 2;
 
     private JPanel homePanel;
-    private JPanel addUserPanel;
     private JPanel listingPanel;
     private JPanel tacheMetierPanel;
 
@@ -37,8 +36,7 @@ public class MainWindow extends JFrame {
         setBounds(X_BOUNDS, Y_BOUNDS, FRAME_WIDTH, FRAME_HEIGHT);
 
         homePanel = new HomePanel();
-        addUserPanel = new AddUserPanel();
-        listingPanel = new ListingPanel();
+        listingPanel = new ListingPanel(this);
         tacheMetierPanel = new TacheMetierPanel();
         menuBar = new MenuBar(this);
         researchPrivateMessage = new ResearchPrivateMessage();
@@ -62,10 +60,6 @@ public class MainWindow extends JFrame {
 
     public JPanel getHomePanel() {
         return homePanel;
-    }
-
-    public JPanel getAddUserPanel() {
-        return addUserPanel;
     }
 
     public JPanel getListingPanel() {
