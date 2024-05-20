@@ -19,9 +19,14 @@ public class MenuBar implements ActionListener {
 
     private final JMenuItem listing;
 
-    private final JMenuItem Research;
     private final JMenuItem exit;
     private final JMenuItem tacheMetier;
+
+    private final JMenuItem researchLike;
+
+    private final JMenuItem researchCommunity;
+
+    private final JMenuItem researchPrivateMessage;
 
     public MenuBar(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -45,8 +50,14 @@ public class MenuBar implements ActionListener {
         listing.addActionListener(this);
 
 
-        Research = new JMenuItem("Recherches");
-        Research.addActionListener(this);
+        researchLike = new JMenuItem("Combien de like entre deux dates ?");
+        researchLike.addActionListener(this);
+
+        researchCommunity = new JMenuItem("Qui est dans la communauté ?");
+        researchCommunity.addActionListener(this);
+
+        researchPrivateMessage = new JMenuItem("Qui a envoyé un message privé à qui ?");
+        researchPrivateMessage.addActionListener(this);
 
         tacheMetier = new JMenuItem("Tâche métier");
         tacheMetier.addActionListener(this);
@@ -63,11 +74,13 @@ public class MenuBar implements ActionListener {
         menuCRUD.add(listing);
 
 
-        menuResearch.add(Research);
+        menuResearch.add(researchLike);
+        menuResearch.addSeparator();
+        menuResearch.add(researchCommunity);
+        menuResearch.addSeparator();
+        menuResearch.add(researchPrivateMessage);
 
         menuTacheMetier.add(tacheMetier);
-
-
 
         menuBar.add(menu);
         menuBar.add(menuCRUD);
@@ -84,13 +97,20 @@ public class MenuBar implements ActionListener {
             mainWindow.switchPanel(mainWindow.getHomePanel());
         } else if (e.getSource() == addUser) {
             mainWindow.switchPanel(mainWindow.getAddUserPanel());
-        } else if (e.getSource() == Research) {
-            mainWindow.switchPanel(mainWindow.getResearchPanel());
         } else if (e.getSource() == tacheMetier) {
             mainWindow.switchPanel(mainWindow.getTacheMetierPanel());
         }
         else if (e.getSource() == listing) {
             mainWindow.switchPanel(mainWindow.getListingPanel());
+        }
+        else if (e.getSource() == researchLike) {
+            mainWindow.switchPanel(mainWindow.getResearchLike());
+        }
+        else if (e.getSource() == researchCommunity) {
+            mainWindow.switchPanel(mainWindow.getResearchCommunity());
+        }
+        else if (e.getSource() == researchPrivateMessage) {
+            mainWindow.switchPanel(mainWindow.getResearchPrivateMessage());
         }
         else if (e.getSource() == exit) {
             System.exit(0);
