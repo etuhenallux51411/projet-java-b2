@@ -1,5 +1,8 @@
 package main.viewPackage;
 
+import main.dataAccessPackage.ConnectionDataAccess;
+import main.exceptionPackage.ConnectionDataAccessException;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -23,6 +26,13 @@ public class MainWindow extends JFrame {
 
     public MainWindow() {
         super(WINDOW_TITLE);
+        try {
+            ConnectionDataAccess.getInstance();
+        } catch (ConnectionDataAccessException e) {
+            displayError(e.toString());
+            System.exit(1);
+        }
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(X_BOUNDS, Y_BOUNDS, FRAME_WIDTH, FRAME_HEIGHT);
 
@@ -34,8 +44,13 @@ public class MainWindow extends JFrame {
         researchPrivateMessage = new ResearchPrivateMessage();
         researchLike = new ResearchLike();
         researchCommunity = new ResearchCommunity();
+
         switchPanel(homePanel);
         setVisible(true);
+    }
+
+    public void displayError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     public void switchPanel(JPanel panel) {
@@ -57,18 +72,19 @@ public class MainWindow extends JFrame {
         return listingPanel;
     }
 
-    public JPanel getTacheMetierPanel() {return tacheMetierPanel;}
-
+    public JPanel getTacheMetierPanel() {
+        return tacheMetierPanel;
+    }
 
     public JPanel getResearchPrivateMessage() {
         return researchPrivateMessage;
     }
+
     public JPanel getResearchLike() {
         return researchLike;
     }
+
     public JPanel getResearchCommunity() {
         return researchCommunity;
     }
-
-
 }

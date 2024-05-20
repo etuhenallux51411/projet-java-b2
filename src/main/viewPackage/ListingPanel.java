@@ -6,22 +6,26 @@ import main.exceptionPackage.ConnectionDataAccessException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class ListingPanel extends JPanel {
+public class ListingPanel extends JPanel implements ActionListener {
 
     private JTable tableUsers;
     private ArrayList<UserModel> users = new ArrayList<>();
     private String[] columnNames;
-    private JButton buttonUpdate, buttonDelete, buttonAdd;
+    private JButton buttonUpdate;
+    private JButton buttonDelete;
+    private JButton buttonAdd;
 
     public ListingPanel() {
         setLayout(new BorderLayout());
 
         // Top label
-        JLabel label = new JLabel("Listing Panel", SwingConstants.CENTER);
-        add(label, BorderLayout.NORTH);
+//        JLabel label = new JLabel("Listing Panel", SwingConstants.CENTER);
+//        add(label, BorderLayout.NORTH);
 
         // Adding a vertical gap
         JPanel gapPanel = new JPanel();
@@ -38,6 +42,8 @@ public class ListingPanel extends JPanel {
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
         buttonAdd = new JButton("Add User");
+        buttonAdd.addActionListener(this);
+
         buttonUpdate = new JButton("Update User");
         buttonDelete = new JButton("Delete User");
 
@@ -62,5 +68,13 @@ public class ListingPanel extends JPanel {
         }
         tableUsers = new JTable(new Object[][]{}, columnNames);
         scrollPane.setViewportView(tableUsers);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == buttonAdd) {
+            MainWindow mainWindow = (MainWindow) SwingUtilities.getWindowAncestor(this);
+            mainWindow.switchPanel(mainWindow.getAddUserPanel());
+        }
     }
 }
