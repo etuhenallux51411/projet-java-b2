@@ -56,12 +56,14 @@ public class UserDAOImpl implements UserDAO  {
         }
     }
 
+
     @Override
     public List<UserModel> getAllUsers() {
         List<UserModel> users = new ArrayList<>();
         try {
             String sql = "SELECT * FROM user";
             PreparedStatement stmt = connection.prepareStatement(sql);
+
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 UserModel user = new UserModel(
