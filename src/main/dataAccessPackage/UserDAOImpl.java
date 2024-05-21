@@ -25,12 +25,12 @@ public class UserDAOImpl implements UserDAO  {
         return null;
     }
 
-    @Override
+        @Override
     public List<UserModel> getAllUsers() throws ConnectionDataAccessException {
         List<UserModel> users = new ArrayList<>();
         try {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM user");
-            ResultSet rs = stmt.executeQuery("SELECT * FROM user");
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 UserModel user = new UserModel();
                 user.setEmail(rs.getString("email"));
