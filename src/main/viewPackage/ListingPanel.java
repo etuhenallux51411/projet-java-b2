@@ -83,7 +83,6 @@ public class ListingPanel extends JPanel implements ActionListener {
     }
 
     public JTable updateTable(List<UserModel> users, List<String> columnsNames) {
-        JTable table;
         Object[][] data = new Object[users.size()][columnsNames.size()];
         for (int i = 0; i < users.size(); i++) {
             UserModel user = users.get(i);
