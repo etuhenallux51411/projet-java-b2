@@ -47,11 +47,11 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public List<LocalityModel> getLocality(String countryName) throws LocalityException {
         try {
-            String query = "SELECT l.* FROM localisation AS loc " +
+            String sql = "SELECT l.* FROM localisation AS loc " +
                     "JOIN locality AS l on loc.locality = l.code " +
                     "JOIN country AS c on loc.country = c.id " +
                     "WHERE c.name = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, countryName);
             ResultSet resultSet = preparedStatement.executeQuery();
             localities = new ArrayList<>();

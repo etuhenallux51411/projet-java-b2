@@ -18,8 +18,8 @@ public class CountriesDAOImpl implements CountriesDAO {
     @Override
     public List<String> getCountries() throws CountriesDAOException {
         try {
-            String query = "SELECT name FROM country";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            String sql = "SELECT name FROM country";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             countries = new ArrayList<>();
 
