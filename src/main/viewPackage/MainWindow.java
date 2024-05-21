@@ -51,7 +51,13 @@ public class MainWindow extends JFrame {
         JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.ERROR_MESSAGE);
     }
 
+    public void displayMessage(String message, String title) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
+    }
+
     public void switchPanel(JPanel panel) {
+        if (panel == listingPanel)
+            ((ListingPanel) listingPanel).refreshUsersData();
         getContentPane().removeAll();
         getContentPane().add(panel);
         revalidate();

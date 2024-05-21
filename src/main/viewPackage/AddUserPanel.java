@@ -20,13 +20,14 @@ import main.controllerPackage.UserController;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.CountriesDAOException;
 import main.exceptionPackage.LocalityException;
+import main.exceptionPackage.UserCreationException;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
 
 public class AddUserPanel extends JPanel implements ActionListener, ItemListener {
     private static final String GENDER_MAN_STRING = "Homme";
-    private static final String GENDER_WOMAN_STRING = "Homme";
-    private static final String GENDER_OTHER_STRING = "Homme";
+    private static final String GENDER_WOMAN_STRING = "Femme";
+    private static final String GENDER_OTHER_STRING = "Autre";
     private static final String[] GENDER_CHOICE = {GENDER_MAN_STRING, GENDER_WOMAN_STRING, GENDER_OTHER_STRING};
     private static final int TEXT_FIELD_COLUMNS = 20;
     private static final int LABEL_PADDING = 20;
@@ -123,9 +124,8 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
         add(component, gbc);
     }
 
-    private void refreshLocalities() {
+    private void refreshLocalities() throws LocalityException, ConnectionDataAccessException {
         List<LocalityModel> localities;
-        try {
             localities = userController.getLocality(Objects.requireNonNull(country.getSelectedItem()).toString());
             zipCode.removeAllItems();
             List<LocalityItem> formattedLocalities = new ArrayList<>();
@@ -140,9 +140,6 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
             for (LocalityItem formattedLocality : formattedLocalities) {
                 zipCode.addItem(formattedLocality);
             }
-        } catch (ConnectionDataAccessException | LocalityException ex) {
-            mainWindow.displayError(ex.toString());
-        }
     }
 
     @Override
@@ -170,8 +167,15 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
                 else user.setBio(bio.getText());
 
                 user.setAdmin(isAdmin.isSelected());
+                user.setHome(((LocalityItem) zipCode.getSelectedItem()).getLocalityId());
 
-                System.out.println("User created");
+                try {
+                    userController.createUser(user);
+                    mainWindow.displayMessage("Utilisateur créé avec succès", "Succès");
+                    mainWindow.switchPanel(mainWindow.getListingPanel());
+                } catch (UserCreationException ex) {
+                    mainWindow.displayError(ex.toString());
+                }
             }
         }
     }
@@ -225,7 +229,11 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     @Override
     public void itemStateChanged(ItemEvent e) {
         if (e.getSource() == country) {
-            refreshLocalities();
+            try {
+                refreshLocalities();
+            } catch (ConnectionDataAccessException | LocalityException ex) {
+                mainWindow.displayError(ex.toString());
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import main.dataAccessPackage.UserDAO;
 import main.dataAccessPackage.UserDAOImpl;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.LocalityException;
+import main.exceptionPackage.UserCreationException;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
 
@@ -20,35 +21,35 @@ public class UserManager implements UserDAO {
         this.userDAO = dao;
     }
 
-    public Boolean createUser(UserModel user) throws ConnectionDataAccessException {
-       return userDAO.createUser(user);
+    public void createUser(UserModel user) throws UserCreationException {
+        userDAO.createUser(user);
     }
 
     @Override
-    public List<UserModel> getAllUsers() throws ConnectionDataAccessException {
+    public List<UserModel> getAllUsers() {
         return userDAO.getAllUsers();
     }
 
     @Override
-    public UserModel getUser(String email) throws ConnectionDataAccessException {
+    public UserModel getUser(String email) {
         return userDAO.getUser(email);
     }
 
     @Override
-    public Boolean updateUser(UserModel user) throws ConnectionDataAccessException {
+    public Boolean updateUser(UserModel user) {
         return userDAO.updateUser(user);
     }
 
     @Override
-    public Boolean deleteUser(UserModel user) throws ConnectionDataAccessException {
+    public Boolean deleteUser(UserModel user) {
         return userDAO.deleteUser(user);
     }
 
     @Override
-    public List<LocalityModel> getLocality(String countryName) throws ConnectionDataAccessException, LocalityException {
+    public List<LocalityModel> getLocality(String countryName) throws LocalityException {
         return userDAO.getLocality(countryName);
     }
-    public List<String> getColumnsNames() throws ConnectionDataAccessException {
+    public List<String> getColumnsNames() {
         return userDAO.getColumnsNames();
     }
 }
