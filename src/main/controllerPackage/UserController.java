@@ -27,8 +27,8 @@ public class UserController implements UserDAO {
     }
 
     @Override
-    public UserModel getUser(String email) {
-        return userManager.getUser(email);
+    public UserModel getUser(int id) {
+        return null;
     }
 
     @Override

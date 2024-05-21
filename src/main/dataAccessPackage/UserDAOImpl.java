@@ -3,6 +3,7 @@ package main.dataAccessPackage;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.LocalityException;
 import main.exceptionPackage.UserCreationException;
+import main.exceptionPackage.UserSearchException;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
 
@@ -12,7 +13,6 @@ import java.util.List;
 
 public class UserDAOImpl implements UserDAO  {
     private Connection connection;
-    private List<UserModel> users;
     private List<LocalityModel> localities;
 
     private List<String> columnNames;
@@ -49,13 +49,11 @@ public class UserDAOImpl implements UserDAO  {
             stmt.setInt(11, user.getHome());
 
             int lines = stmt.executeUpdate();
-
             if (lines == 0) throw new UserCreationException("L'utilisateur n'a pas pu être créé");
         } catch (SQLException e) {
             throw new UserCreationException(e.getMessage());
         }
     }
-
 
     @Override
     public List<UserModel> getAllUsers() {
@@ -84,12 +82,38 @@ public class UserDAOImpl implements UserDAO  {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            // TODO
         }
         return users;
     }
 
     @Override
-    public UserModel getUser(String email) {
+    public UserModel getUser(int id) throws UserSearchException {
+        try {
+            String sql = "SELECT * FROM user where id = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new UserModel(
+                        rs.getInt("id"),
+                        rs.getString("email"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getDate("date_of_birth"),
+                        rs.getString("gender").charAt(0),
+                        rs.getDate("created_at"),
+                        rs.getString("street_and_number"),
+                        rs.getString("phone_number"),
+                        rs.getString("biography"),
+                        rs.getBoolean("is_admin"),
+                        rs.getInt("home")
+                );
+            }
+        } catch (SQLException e) {
+            throw new UserSearchException("Erreur lors de la récupération de l'utilisateur");
+        }
         return null;
     }
 
@@ -101,11 +125,12 @@ public class UserDAOImpl implements UserDAO  {
     @Override
     public Boolean deleteUser(UserModel user) {
         try{
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM user WHERE email = ?");
-            ps.setString(1, user.getEmail());
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM user WHERE id = ?");
+            ps.setInt(1, user.getId());
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
+            // TODO replace
             throw new RuntimeException(e);
         }
     }
@@ -148,6 +173,7 @@ public class UserDAOImpl implements UserDAO  {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            // TODO
         }
         return columnNames;
     }
