@@ -14,15 +14,17 @@ public class UserModel {
     private String phoneNumber;
     private String bio;
     private boolean isAdmin;
-    private LocalityModel home;
+    private int home;
 
-    public UserModel(String email, String username, String password, Date dateOfBirth, char gender,
-                     String streetAndNumber, String phoneNumber, String bio, boolean isAdmin, LocalityModel home) {
+    public UserModel(int id, String email, String username, String password, Date dateOfBirth, char gender,
+                     Date createdAt, String streetAndNumber, String phoneNumber, String bio, boolean isAdmin, int home) {
+        setId(id);
         setEmail(email);
         setUsername(username);
         setPassword(password);
         setDateOfBirth(dateOfBirth);
         setGender(gender);
+        setCreatedAt(createdAt);
         setStreetAndNumber(streetAndNumber);
         setPhoneNumber(phoneNumber);
         setBio(bio);
@@ -31,6 +33,14 @@ public class UserModel {
     }
 
     public UserModel() {}
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getEmail() {
         return email;
@@ -72,6 +82,14 @@ public class UserModel {
         this.gender = gender;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public String getStreetAndNumber() {
         return streetAndNumber;
     }
@@ -104,11 +122,11 @@ public class UserModel {
         isAdmin = admin;
     }
 
-    public LocalityModel getHome() {
+    public int getHome() {
         return home;
     }
 
-    public void setHome(LocalityModel home) {
+    public void setHome(int home) {
         this.home = home;
     }
 }

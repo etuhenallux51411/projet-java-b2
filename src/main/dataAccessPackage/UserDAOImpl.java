@@ -2,6 +2,7 @@ package main.dataAccessPackage;
 
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.LocalityException;
+import main.exceptionPackage.UserCreationException;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
 
@@ -21,27 +22,64 @@ public class UserDAOImpl implements UserDAO  {
     }
 
     @Override
-    public Boolean createUser(UserModel user) throws ConnectionDataAccessException {
-        return null;
+    public void createUser(UserModel user) throws UserCreationException {
+        try {
+            String sql = "INSERT INTO user " +
+                    "(email, username, password, date_of_birth, gender, created_at," +
+                    " street_and_number, phone_number, biography, is_admin, home)" +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, user.getEmail());
+            stmt.setString(2, user.getUsername());
+            stmt.setString(3, user.getPassword());
+            stmt.setDate(4, new Date(user.getDateOfBirth().getTime()));
+            stmt.setString(5, String.valueOf(user.getGender()));
+            stmt.setDate(6, new Date(System.currentTimeMillis()));
+            stmt.setString(7, user.getStreetAndNumber());
+
+            String phoneNumber = user.getPhoneNumber();
+            if (phoneNumber == null) stmt.setNull(8, Types.VARCHAR);
+            else stmt.setString(8, phoneNumber);
+
+            String bio = user.getBio();
+            if (bio == null) stmt.setNull(9, Types.VARCHAR);
+            else stmt.setString(9, bio);
+
+            stmt.setBoolean(10, user.isAdmin());
+            stmt.setInt(11, user.getHome());
+
+            int lines = stmt.executeUpdate();
+
+            if (lines == 0) throw new UserCreationException("L'utilisateur n'a pas pu être créé");
+        } catch (SQLException e) {
+            throw new UserCreationException(e.getMessage());
+        }
     }
 
-        @Override
-    public List<UserModel> getAllUsers() throws ConnectionDataAccessException {
+
+    @Override
+    public List<UserModel> getAllUsers() {
         List<UserModel> users = new ArrayList<>();
         try {
-            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM user");
+            String sql = "SELECT * FROM user";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                UserModel user = new UserModel();
-                user.setEmail(rs.getString("email"));
-                user.setUsername(rs.getString("username"));
-                user.setPassword(rs.getString("password"));
-                user.setDateOfBirth(rs.getDate("date_of_birth"));
-                user.setGender(rs.getCharacterStream("gender").toString().charAt(0));
-                user.setStreetAndNumber(rs.getString("street_and_number"));
-                user.setPhoneNumber(rs.getString("phone_number"));
-                user.setBio(rs.getString("bio"));
-                user.setAdmin(rs.getBoolean("admin"));
+                UserModel user = new UserModel(
+                    rs.getInt("id"),
+                    rs.getString("email"),
+                    rs.getString("username"),
+                    rs.getString("password"),
+                    rs.getDate("date_of_birth"),
+                    rs.getString("gender").charAt(0),
+                    rs.getDate("created_at"),
+                    rs.getString("street_and_number"),
+                    rs.getString("phone_number"),
+                    rs.getString("biography"),
+                    rs.getBoolean("is_admin"),
+                    rs.getInt("home")
+                );
                 users.add(user);
             }
         } catch (SQLException e) {
@@ -51,17 +89,17 @@ public class UserDAOImpl implements UserDAO  {
     }
 
     @Override
-    public UserModel getUser(String email) throws ConnectionDataAccessException {
+    public UserModel getUser(String email) {
         return null;
     }
 
     @Override
-    public Boolean updateUser(UserModel user) throws ConnectionDataAccessException {
+    public Boolean updateUser(UserModel user) {
         return null;
     }
 
     @Override
-    public Boolean deleteUser(UserModel user) throws ConnectionDataAccessException {
+    public Boolean deleteUser(UserModel user) {
         try{
             PreparedStatement ps = connection.prepareStatement("DELETE FROM user WHERE email = ?");
             ps.setString(1, user.getEmail());
@@ -75,10 +113,8 @@ public class UserDAOImpl implements UserDAO  {
     @Override
     public List<LocalityModel> getLocality(String countryName) throws LocalityException {
         try {
-            String sql = "SELECT l.* FROM localisation AS loc " +
-                    "JOIN locality AS l on loc.locality = l.code " +
-                    "JOIN country AS c on loc.country = c.id " +
-                    "WHERE c.name = ?";
+            String sql = "SELECT * FROM locality l " +
+                    "WHERE l.localisation = (select c.id from country c where c.name = ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, countryName);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -89,7 +125,8 @@ public class UserDAOImpl implements UserDAO  {
                     resultSet.getInt("code"),
                     resultSet.getString("name"),
                     resultSet.getString("city"),
-                    resultSet.getInt("zip_code")
+                    resultSet.getInt("zip_code"),
+                    resultSet.getInt("localisation")
                 );
                 localities.add(locality);
             }
@@ -98,7 +135,8 @@ public class UserDAOImpl implements UserDAO  {
         }
         return localities;
     }
-    public List<String> getColumnsNames() throws ConnectionDataAccessException {
+
+    public List<String> getColumnsNames() {
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM user LIMIT 1");

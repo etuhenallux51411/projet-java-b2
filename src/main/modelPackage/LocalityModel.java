@@ -5,12 +5,14 @@ public class LocalityModel {
     private String name;
     private String city;
     private int zipCode;
+    private int localisation;
 
-    public LocalityModel(int code, String name, String city, int zipCode) {
+    public LocalityModel(int code, String name, String city, int zipCode, int localisation) {
         setCode(code);
         setName(name);
         setCity(city);
         setZipCode(zipCode);
+        setlocalisation(localisation);
     }
 
     public LocalityModel() {}
@@ -45,5 +47,13 @@ public class LocalityModel {
 
     public void setZipCode(int zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public int getlocalisation() {
+        return localisation;
+    }
+
+    public void setlocalisation(int localisation) {
+        this.localisation = localisation;
     }
 }

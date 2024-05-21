@@ -2,17 +2,18 @@ package main.dataAccessPackage;
 
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.LocalityException;
+import main.exceptionPackage.UserCreationException;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
 
 import java.util.List;
 
 public interface UserDAO {
-    public Boolean createUser(UserModel user) throws ConnectionDataAccessException;
-    public List<UserModel> getAllUsers() throws ConnectionDataAccessException;
-    public UserModel getUser(String email) throws ConnectionDataAccessException;
-    public Boolean updateUser(UserModel user) throws ConnectionDataAccessException;
-    public Boolean deleteUser(UserModel user) throws ConnectionDataAccessException;
-    public List<LocalityModel> getLocality(String countryName) throws ConnectionDataAccessException, LocalityException;
-    public List<String> getColumnsNames() throws ConnectionDataAccessException;
+    public void createUser(UserModel user) throws UserCreationException;
+    public List<UserModel> getAllUsers();
+    public UserModel getUser(String email);
+    public Boolean updateUser(UserModel user);
+    public Boolean deleteUser(UserModel user);
+    public List<LocalityModel> getLocality(String countryName) throws LocalityException;
+    public List<String> getColumnsNames();
 }
