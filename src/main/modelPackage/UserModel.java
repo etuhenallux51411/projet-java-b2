@@ -1,15 +1,34 @@
 package main.modelPackage;
 
+import java.sql.Date;
+
 public class UserModel {
+    private int id;
     private String email;
     private String username;
     private String password;
-    private String dateOfBirth;
+    private Date dateOfBirth;
     private char gender;
+    private Date createdAt;
     private String streetAndNumber;
     private String phoneNumber;
     private String bio;
     private boolean isAdmin;
+    private LocalityModel home;
+
+    public UserModel(String email, String username, String password, Date dateOfBirth, char gender,
+                     String streetAndNumber, String phoneNumber, String bio, boolean isAdmin, LocalityModel home) {
+        setEmail(email);
+        setUsername(username);
+        setPassword(password);
+        setDateOfBirth(dateOfBirth);
+        setGender(gender);
+        setStreetAndNumber(streetAndNumber);
+        setPhoneNumber(phoneNumber);
+        setBio(bio);
+        setAdmin(isAdmin);
+        setHome(home);
+    }
 
     public UserModel() {}
 
@@ -37,11 +56,11 @@ public class UserModel {
         this.password = password;
     }
 
-    public String getDateOfBirth() {
+    public Date getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(String dateOfBirth) {
+    public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -83,5 +102,13 @@ public class UserModel {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public LocalityModel getHome() {
+        return home;
+    }
+
+    public void setHome(LocalityModel home) {
+        this.home = home;
     }
 }

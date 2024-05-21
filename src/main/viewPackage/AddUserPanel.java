@@ -7,9 +7,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import main.controllerPackage.CountriesController;
 import main.controllerPackage.UserController;
@@ -17,12 +21,16 @@ import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.CountriesDAOException;
 import main.exceptionPackage.LocalityException;
 import main.modelPackage.LocalityModel;
+import main.modelPackage.UserModel;
 
 public class AddUserPanel extends JPanel implements ActionListener, ItemListener {
-    private String[] GENDER_CHOICE = {"Male", "Female", "Other"};
-    private int TEXT_FIELD_COLUMNS = 20;
-    private int LABEL_PADDING = 20;
-    private int FIELD_PADDING = 5;
+    private static final String GENDER_MAN_STRING = "Homme";
+    private static final String GENDER_WOMAN_STRING = "Homme";
+    private static final String GENDER_OTHER_STRING = "Homme";
+    private static final String[] GENDER_CHOICE = {GENDER_MAN_STRING, GENDER_WOMAN_STRING, GENDER_OTHER_STRING};
+    private static final int TEXT_FIELD_COLUMNS = 20;
+    private static final int LABEL_PADDING = 20;
+    private static final int FIELD_PADDING = 5;
 
     private MainWindow mainWindow;
     private int nbFields = 0;
@@ -30,7 +38,6 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     private JTextField username;
     private JPasswordField password;
     private JTextField email;
-    private JTextField dateOfBirth;
     private JTextField phoneNumber;
     private JTextField street;
     private JTextField bio;
@@ -38,7 +45,7 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     private JSpinner dateOfBirthSpinner;
     private SpinnerDateModel dateOfBirthModel;
     private JButton submit;
-    private JComboBox<String> zipCode;
+    private JComboBox<LocalityItem> zipCode;
     private JComboBox<String> country;
     private JComboBox<String> gender;
     private Dimension textFieldSize = new JTextField(TEXT_FIELD_COLUMNS).getPreferredSize();
@@ -121,16 +128,16 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
         try {
             localities = userController.getLocality(Objects.requireNonNull(country.getSelectedItem()).toString());
             zipCode.removeAllItems();
-            List<String> formattedLocalities = new ArrayList<>();
+            List<LocalityItem> formattedLocalities = new ArrayList<>();
             if (localities.isEmpty()) {
-                formattedLocalities.add("Aucune localité trouvée");
+                formattedLocalities.add(new LocalityItem("Aucune localité trouvée", -1));
             } else {
                 for (LocalityModel locality : localities) {
-                    formattedLocalities.add(locality.getCity() + " - " + locality.getZipCode());
+                    formattedLocalities.add(new LocalityItem(locality.getCity() + " - " + locality.getZipCode(), locality.getCode()));
                 }
             }
 
-            for (String formattedLocality : formattedLocalities) {
+            for (LocalityItem formattedLocality : formattedLocalities) {
                 zipCode.addItem(formattedLocality);
             }
         } catch (ConnectionDataAccessException | LocalityException ex) {
@@ -141,9 +148,78 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == submit) {
-            Date date = new Date(dateOfBirthModel.getDate().getTime());
-            // send sql via controller
+            Date dob = new Date(dateOfBirthModel.getDate().getTime());
+
+            if (validateForm()) {
+                UserModel user = new UserModel();
+                user.setEmail(email.getText());
+                user.setUsername(username.getText());
+                user.setPassword(new String(password.getPassword()));
+                user.setDateOfBirth(dob);
+
+                if (Objects.requireNonNull(gender.getSelectedItem()).equals(GENDER_MAN_STRING)) user.setGender('m');
+                else if (Objects.requireNonNull(gender.getSelectedItem()).equals(GENDER_WOMAN_STRING)) user.setGender('w');
+                else user.setGender('o');
+
+                user.setStreetAndNumber(street.getText());
+
+                if (phoneNumber.getText().isEmpty()) user.setPhoneNumber(null);
+                else user.setPhoneNumber(phoneNumber.getText());
+
+                if (bio.getText().isEmpty()) user.setBio(null);
+                else user.setBio(bio.getText());
+
+                user.setAdmin(isAdmin.isSelected());
+
+                System.out.println("User created");
+            }
         }
+    }
+
+    private Boolean validateForm() {
+        String emailText = email.getText();
+        String usernameText = username.getText();
+        String passwordText = new String(password.getPassword());
+        String streetText = street.getText();
+        LocalityItem selectedItem = (LocalityItem) zipCode.getSelectedItem();
+        LocalDate dob = dateOfBirthModel.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        int localityId = selectedItem != null ? selectedItem.getLocalityId() : -1;
+
+        if (emailText.isEmpty() || usernameText.isEmpty() || passwordText.isEmpty() || streetText.isEmpty() || localityId == -1) {
+            mainWindow.displayError("Tous les champs obligatoires doivent être remplis");
+            return false;
+        }
+
+        if (!isValidEmail(emailText)) {
+            mainWindow.displayError("L'email n'est pas valide (format : x@x.x)");
+            return false;
+        }
+
+        if (!validDateOfBirth(dob)) {
+            mainWindow.displayError("La date de naissance n'est pas valide");
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isValidEmail(String email) {
+        // Expression régulière pour correspondre au format x@x.x
+        String emailRegex = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$";
+
+        Pattern pattern = Pattern.compile(emailRegex);
+
+        // Vérification de l'email par rapport au pattern
+        Matcher matcher = pattern.matcher(email);
+
+        return matcher.matches();
+    }
+
+    private static Boolean validDateOfBirth(LocalDate dob) {
+        LocalDate date1900 = LocalDate.of(1899, 12, 31);
+        LocalDate today = LocalDate.now().plusDays(1);
+
+        return dob.isAfter(date1900) && dob.isBefore(today);
     }
 
     @Override

@@ -23,32 +23,32 @@ public class MainWindow extends JFrame {
     private JPanel researchCommunity;
     private MenuBar menuBar;
 
-    public MainWindow() throws ConnectionDataAccessException {
+    public MainWindow() {
         super(WINDOW_TITLE);
-        try {
-            ConnectionDataAccess.getInstance();
-        } catch (ConnectionDataAccessException e) {
-            displayError(e.toString());
-            System.exit(1);
-        }
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(X_BOUNDS, Y_BOUNDS, FRAME_WIDTH, FRAME_HEIGHT);
 
-        homePanel = new HomePanel();
-        listingPanel = new ListingPanel(this);
-        tacheMetierPanel = new TacheMetierPanel();
-        menuBar = new MenuBar(this);
-        researchPrivateMessage = new ResearchPrivateMessage();
-        researchLike = new ResearchLike();
-        researchCommunity = new ResearchCommunity();
+        try {
+            ConnectionDataAccess.getInstance();
+            listingPanel = new ListingPanel(this);
+            homePanel = new HomePanel();
+            tacheMetierPanel = new TacheMetierPanel();
+            menuBar = new MenuBar(this);
+            researchPrivateMessage = new ResearchPrivateMessage();
+            researchLike = new ResearchLike();
+            researchCommunity = new ResearchCommunity();
+        } catch (ConnectionDataAccessException e) {
+            displayError(e.toString());
+            System.exit(1);
+        }
 
         switchPanel(homePanel);
         setVisible(true);
     }
 
     public void displayError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.ERROR_MESSAGE);
     }
 
     public void switchPanel(JPanel panel) {

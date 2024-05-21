@@ -36,7 +36,7 @@ public class UserDAOImpl implements UserDAO  {
                 user.setEmail(rs.getString("email"));
                 user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
-                user.setDateOfBirth(rs.getString("date_of_birth"));
+                user.setDateOfBirth(rs.getDate("date_of_birth"));
                 user.setGender(rs.getCharacterStream("gender").toString().charAt(0));
                 user.setStreetAndNumber(rs.getString("street_and_number"));
                 user.setPhoneNumber(rs.getString("phone_number"));
