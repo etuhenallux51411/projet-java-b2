@@ -14,4 +14,5 @@ public interface UserDAO {
     public Boolean updateUser(UserModel user) throws ConnectionDataAccessException;
     public Boolean deleteUser(UserModel user) throws ConnectionDataAccessException;
     public List<LocalityModel> getLocality(String countryName) throws ConnectionDataAccessException, LocalityException;
+    public List<String> getColumnsNames() throws ConnectionDataAccessException;
 }

@@ -23,7 +23,7 @@ public class MainWindow extends JFrame {
     private JPanel researchCommunity;
     private MenuBar menuBar;
 
-    public MainWindow() {
+    public MainWindow() throws ConnectionDataAccessException {
         super(WINDOW_TITLE);
         try {
             ConnectionDataAccess.getInstance();
