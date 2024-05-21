@@ -48,4 +48,7 @@ public class UserManager implements UserDAO {
     public List<LocalityModel> getLocality(String countryName) throws ConnectionDataAccessException, LocalityException {
         return userDAO.getLocality(countryName);
     }
+    public List<String> getColumnsNames() throws ConnectionDataAccessException {
+        return userDAO.getColumnsNames();
+    }
 }
