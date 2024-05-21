@@ -87,8 +87,6 @@ public class ListingPanel extends JPanel implements ActionListener {
         Object[][] data = new Object[users.size()][columnsNames.size()];
         for (int i = 0; i < users.size(); i++) {
             UserModel user = users.get(i);
-            System.out.println(user.getGender());
-            System.out.println(user.getCreatedAt());
             data[i][0] = user.getId();
             data[i][1] = user.getEmail();
             data[i][2] = user.getUsername();
@@ -102,17 +100,6 @@ public class ListingPanel extends JPanel implements ActionListener {
             data[i][10] = user.isAdmin();
             data[i][11] = user.getHome();
         }
-//        for (int i = 0; i < users.size(); i++) {
-//            UserModel user = users.get(i);
-//            data[i][0] = user.getEmail();
-//            data[i][1] = user.getUsername();
-//            data[i][2] = user.getPassword();
-//            data[i][3] = user.getDateOfBirth();
-//            data[i][4] = user.getStreetAndNumber();
-//            data[i][5] = user.getPhoneNumber();
-//            data[i][6] = user.getBio();
-//            data[i][7] = user.isAdmin();
-//        }
         ListingTableModel model = new ListingTableModel(data, columnsNames.toArray());
         return new JTable(model);
     }
