@@ -20,6 +20,7 @@ import main.controllerPackage.UserController;
 import main.exceptionPackage.*;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
+import main.validatorPackage.FormValidator;
 
 public class AddUserPanel extends JPanel implements ActionListener, ItemListener {
     private static final String GENDER_MAN_STRING = "Homme";
@@ -151,10 +152,10 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == submit) {
-            Date dob = new Date(dateOfBirthModel.getDate().getTime());
-
             if (validateForm()) {
                 UserModel user = new UserModel();
+                Date dob = new Date(dateOfBirthModel.getDate().getTime());
+
                 user.setEmail(email.getText());
                 user.setUsername(username.getText());
                 user.setPassword(new String(password.getPassword()));
@@ -200,40 +201,21 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
 
         int localityId = selectedItem != null ? selectedItem.getLocalityId() : -1;
 
-        if (emailText.isEmpty() || usernameText.isEmpty() || passwordText.isEmpty() || streetText.isEmpty() || localityId == -1) {
+        if (FormValidator.isOneStringEmpty(emailText, usernameText, passwordText, streetText) || localityId == -1) {
             mainWindow.displayError("Tous les champs obligatoires doivent être remplis");
             return false;
         }
 
-        if (!isValidEmail(emailText)) {
+        if (!FormValidator.isValidEmail(emailText)) {
             mainWindow.displayError("L'email n'est pas valide (format : x@x.x)");
             return false;
         }
 
-        if (!validDateOfBirth(dob)) {
+        if (!FormValidator.validDateOfBirth(dob)) {
             mainWindow.displayError("La date de naissance n'est pas valide");
             return false;
         }
         return true;
-    }
-
-    public static boolean isValidEmail(String email) {
-        // Expression régulière pour correspondre au format x@x.x
-        String emailRegex = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$";
-
-        Pattern pattern = Pattern.compile(emailRegex);
-
-        // Vérification de l'email par rapport au pattern
-        Matcher matcher = pattern.matcher(email);
-
-        return matcher.matches();
-    }
-
-    private static Boolean validDateOfBirth(LocalDate dob) {
-        LocalDate date1900 = LocalDate.of(1899, 12, 31);
-        LocalDate today = LocalDate.now().plusDays(1);
-
-        return dob.isAfter(date1900) && dob.isBefore(today);
     }
 
     @Override

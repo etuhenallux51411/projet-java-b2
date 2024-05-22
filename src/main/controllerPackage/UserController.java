@@ -32,7 +32,6 @@ public class UserController implements UserDAO {
     public UserModel getUser(int id) throws UserResearchExecption {return userManager.getUser(id);}
 
     @Override
-
     public Boolean updateUser(UserModel user) throws UpdateUserException {
         return userManager.updateUser(user);
     }

@@ -58,6 +58,7 @@ public class ResearchCommunity  extends JPanel{
                 add(communityComboBox, gbc);
             } catch (ConnectionDataAccessException | SQLException e) {
                 e.printStackTrace();
+                // TODO
             }
             searchButton = new JButton("Envoyer");
             gbc.gridx = 0;

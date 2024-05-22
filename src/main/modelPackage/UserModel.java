@@ -14,7 +14,7 @@ public class UserModel {
     private String phoneNumber;
     private String bio;
     private boolean isAdmin;
-    private int home;
+    private Integer home;
 
     public UserModel(int id, String email, String username, String password, Date dateOfBirth, char gender,
                      Date createdAt, String streetAndNumber, String phoneNumber, String bio, boolean isAdmin, int home) {
@@ -122,11 +122,11 @@ public class UserModel {
         isAdmin = admin;
     }
 
-    public int getHome() {
+    public Integer getHome() {
         return home;
     }
 
-    public void setHome(int home) {
+    public void setHome(Integer home) {
         this.home = home;
     }
 }

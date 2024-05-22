@@ -1,6 +1,5 @@
 package main.dataAccessPackage;
 
-import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.LocalityException;
 import main.exceptionPackage.UserCreationException;
 import main.exceptionPackage.UserResearchExecption;

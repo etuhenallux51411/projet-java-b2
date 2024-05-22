@@ -54,6 +54,7 @@ public class ResearchPrivateMessage  extends JPanel{
             add(privateMessageComboBox, gbc);
         } catch (ConnectionDataAccessException | SQLException e) {
             e.printStackTrace();
+            // TODO
         }
         searchButton = new JButton("Envoyer");
         gbc.gridx = 0;
