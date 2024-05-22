@@ -16,11 +16,11 @@ public class MainWindow extends JFrame {
 
     private JPanel homePanel;
     private JPanel listingPanel;
-    private JPanel tacheMetierPanel;
-
     private JPanel researchPrivateMessage;
     private JPanel researchLike;
     private JPanel researchCommunity;
+    private JPanel tacheMetierPanel;
+    private JPanel threadPanel;
     private MenuBar menuBar;
 
     public MainWindow() {
@@ -38,6 +38,7 @@ public class MainWindow extends JFrame {
             researchPrivateMessage = new ResearchPrivateMessage();
             researchLike = new ResearchLike();
             researchCommunity = new ResearchCommunity();
+            threadPanel = new ThreadPanel();
         } catch (ConnectionDataAccessException e) {
             displayError(e.toString());
             System.exit(1);
@@ -86,5 +87,9 @@ public class MainWindow extends JFrame {
 
     public JPanel getResearchCommunity() {
         return researchCommunity;
+    }
+
+    public JPanel getThreadPanel() {
+        return threadPanel;
     }
 }

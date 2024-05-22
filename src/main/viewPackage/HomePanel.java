@@ -7,6 +7,8 @@ public class HomePanel extends JPanel {
     private JLabel welcomeText;
 
     public HomePanel(){
+        setLayout(new BorderLayout());
+
         welcomeText = new JLabel(
                 "<html><body><div color='black'><center>Bienvenue dans l'application de simulant un réseau social </center><br/" +
                         "<p>Voici les fonctionnalités de base :</p>" +
@@ -18,8 +20,6 @@ public class HomePanel extends JPanel {
                         "</ul>" +
                         "<p></p></div></body></html>"
         );
-
-        setLayout(new BorderLayout());
         welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
         add(welcomeText, BorderLayout.CENTER);
     }

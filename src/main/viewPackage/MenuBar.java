@@ -9,8 +9,9 @@ public class MenuBar implements ActionListener {
     private JMenuBar menuBar;
     private JMenu menu;
     private JMenu menuCRUD;
-    private JMenu menuTacheMetier;
     private JMenu menuResearch;
+    private JMenu menuTacheMetier;
+    private JMenu menuThread;
     private JMenuItem home;
     private JMenuItem listing;
     private JMenuItem exit;
@@ -18,6 +19,7 @@ public class MenuBar implements ActionListener {
     private JMenuItem researchLike;
     private JMenuItem researchCommunity;
     private JMenuItem researchPrivateMessage;
+    private JMenuItem likeAnimation;
 
     public MenuBar(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -25,8 +27,9 @@ public class MenuBar implements ActionListener {
         menuBar = new JMenuBar();
         menu = new JMenu("Menu");
         menuCRUD = new JMenu("CRUD");
-        menuTacheMetier = new JMenu("Tâche métier");
         menuResearch = new JMenu("Recherches");
+        menuTacheMetier = new JMenu("Tâche métier");
+        menuThread = new JMenu("Thread");
 
         home = new JMenuItem("Retour à l'acceuil");
         home.addActionListener(this);
@@ -46,6 +49,9 @@ public class MenuBar implements ActionListener {
         tacheMetier = new JMenuItem("Tâche métier");
         tacheMetier.addActionListener(this);
 
+        likeAnimation = new JMenuItem("Animation de like (Thread)");
+        likeAnimation.addActionListener(this);
+
         exit = new JMenuItem("Quitter le programme");
         exit.addActionListener(this);
 
@@ -63,16 +69,15 @@ public class MenuBar implements ActionListener {
 
         menuTacheMetier.add(tacheMetier);
 
+        menuThread.add(likeAnimation);
+
         menuBar.add(menu);
         menuBar.add(menuCRUD);
         menuBar.add(menuResearch);
         menuBar.add(menuTacheMetier);
+        menuBar.add(menuThread);
 
-        mainWindow.setJMenuBar(menuBar);
-    }
-
-    public JMenuItem getHomeItem() {
-        return home;
+        this.mainWindow.setJMenuBar(menuBar);
     }
 
     @Override
@@ -93,6 +98,9 @@ public class MenuBar implements ActionListener {
         }
         else if (e.getSource() == researchPrivateMessage) {
             mainWindow.switchPanel(mainWindow.getResearchPrivateMessage());
+        }
+        else if (e.getSource() == likeAnimation) {
+            mainWindow.switchPanel(mainWindow.getThreadPanel());
         }
         else if (e.getSource() == exit) {
             System.exit(0);
