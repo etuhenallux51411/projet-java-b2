@@ -2,10 +2,12 @@ package main.viewPackage;
 
 import main.controllerPackage.UserController;
 import main.exceptionPackage.LocalityException;
+import main.exceptionPackage.UserResearchExecption;
 import main.modelPackage.ListingTableModel;
 import main.modelPackage.UserModel;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.CountriesDAOException;
+import main.exceptionPackage.UpdateUserException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,7 +53,9 @@ public class ListingPanel extends JPanel implements ActionListener {
         buttonAdd.addActionListener(this);
 
         buttonUpdate = new JButton("Modifier un utilisateur");
+        buttonUpdate.addActionListener(this);
         buttonDelete = new JButton("Supprimer un utilisateur");
+        buttonDelete.addActionListener(this);
 
         buttonPanel.add(buttonAdd);
         buttonPanel.add(buttonUpdate);
@@ -72,6 +76,44 @@ public class ListingPanel extends JPanel implements ActionListener {
                 mainWindow.switchPanel(addUserPanel);
             } catch (CountriesDAOException | ConnectionDataAccessException | LocalityException ex) {
                 mainWindow.displayError(ex.toString());
+            }
+        }
+        else if (e.getSource() == buttonDelete) {
+            int selectedRow = tableUsers.getSelectedRow();
+            if (selectedRow == -1) {
+                mainWindow.displayError("Veuillez sélectionner un utilisateur à supprimer");
+            } else {
+                int userId = (int) tableUsers.getValueAt(selectedRow, 0);
+                UserModel user;
+                try {
+                    user = userController.getUser(userId);
+                } catch (UserResearchExecption ex) {
+                    throw new RuntimeException(ex);
+                }
+                userController.deleteUser(user);
+                if (userController.deleteUser(user)) {
+                    mainWindow.displayMessage("Utilisateur supprimé avec succès", "Suppression réussie");
+                }else {
+                    mainWindow.displayError("Erreur lors de la suppression de l'utilisateur");
+                }
+                refreshUsersData();
+            }
+        }
+        else if (e.getSource() == buttonUpdate) {
+            int selectedRow = tableUsers.getSelectedRow();
+            if (selectedRow == -1) {
+                mainWindow.displayError("Veuillez sélectionner un utilisateur à modifier");
+            } else {
+                int userId = (int) tableUsers.getValueAt(selectedRow, 0);
+                UserModel user;
+                try {
+                    user = userController.getUser(userId);
+                    this.addUserPanel = new AddUserPanel(mainWindow, user);
+                    mainWindow.switchPanel(addUserPanel);
+                    refreshUsersData();
+                } catch (UserResearchExecption | CountriesDAOException | ConnectionDataAccessException | LocalityException ex) {
+                    mainWindow.displayError(ex.toString());
+                }
             }
         }
     }

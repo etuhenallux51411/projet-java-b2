@@ -17,10 +17,7 @@ import java.util.regex.Pattern;
 
 import main.controllerPackage.CountriesController;
 import main.controllerPackage.UserController;
-import main.exceptionPackage.ConnectionDataAccessException;
-import main.exceptionPackage.CountriesDAOException;
-import main.exceptionPackage.LocalityException;
-import main.exceptionPackage.UserCreationException;
+import main.exceptionPackage.*;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
 
@@ -54,7 +51,12 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     private CountriesController countriesController;
     private UserController userController;
 
-    public AddUserPanel(MainWindow mainWindow) throws CountriesDAOException, ConnectionDataAccessException, LocalityException {
+
+    public AddUserPanel(MainWindow mainWindow) throws LocalityException, CountriesDAOException, ConnectionDataAccessException {
+        this(mainWindow,null);
+    }
+
+    public AddUserPanel(MainWindow mainWindow, UserModel user) throws CountriesDAOException, ConnectionDataAccessException, LocalityException {
         countriesController = new CountriesController();
         userController = new UserController();
 
@@ -64,7 +66,7 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(LABEL_PADDING, LABEL_PADDING, LABEL_PADDING, LABEL_PADDING);
 
-        topLabel = new JLabel("Création d'un utilisateur");
+        topLabel = new JLabel(user == null ? "Création d'un utilisateur" : "Modification d'un utilisateur");
         gbc.gridx = 0;
         gbc.gridy = nbFields;
         gbc.gridwidth = 2;
@@ -106,10 +108,14 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
 
         addField(gbc, "Admin *", isAdmin = new JCheckBox());
 
-        submit = new JButton("Ajouter l'utilisateur");
+        submit = new JButton(user == null ? "Ajouter l'utilisateur" : "Modifier l'utilisateur");
         submit.setPreferredSize(textFieldSize);
         submit.addActionListener(this);
         addField(gbc, "", submit);
+
+        if (user != null) {
+            populateFields(user);
+        }
 
         setVisible(true);
     }
@@ -170,16 +176,20 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
                 user.setHome(((LocalityItem) zipCode.getSelectedItem()).getLocalityId());
 
                 try {
-                    userController.createUser(user);
-                    mainWindow.displayMessage("Utilisateur créé avec succès", "Succès");
+                    if (submit.getText().equals("Ajouter l'utilisateur")) {
+                        userController.createUser(user);
+                        mainWindow.displayMessage("Utilisateur créé avec succès", "Succès");
+                    } else {
+                        userController.updateUser(user);
+                        mainWindow.displayMessage("Utilisateur modifié avec succès", "Succès");
+                    }
                     mainWindow.switchPanel(mainWindow.getListingPanel());
-                } catch (UserCreationException ex) {
+                } catch (UserCreationException | UpdateUserException ex) {
                     mainWindow.displayError(ex.toString());
                 }
             }
         }
     }
-
     private Boolean validateForm() {
         String emailText = email.getText();
         String usernameText = username.getText();
@@ -234,6 +244,29 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
             } catch (ConnectionDataAccessException | LocalityException ex) {
                 mainWindow.displayError(ex.toString());
             }
+        }
+    }
+    private void populateFields(UserModel user) {
+        email.setText(user.getEmail());
+        username.setText(user.getUsername());
+        password.setText(user.getPassword());
+        dateOfBirthSpinner.setValue(user.getDateOfBirth());
+        street.setText(user.getStreetAndNumber());
+        phoneNumber.setText(user.getPhoneNumber());
+        bio.setText(user.getBio());
+        isAdmin.setSelected(user.isAdmin());
+        gender.setSelectedItem(user.getGender() == 'm' ? GENDER_MAN_STRING : user.getGender() == 'w' ? GENDER_WOMAN_STRING : GENDER_OTHER_STRING);
+
+        try {
+            refreshLocalities();
+            for (int i = 0; i < zipCode.getItemCount(); i++) {
+                if (((LocalityItem) zipCode.getItemAt(i)).getLocalityId() == user.getHome()) {
+                    zipCode.setSelectedIndex(i);
+                    break;
+                }
+            }
+        } catch (LocalityException | ConnectionDataAccessException ex) {
+            mainWindow.displayError(ex.toString());
         }
     }
 }
