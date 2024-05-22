@@ -1,38 +1,61 @@
 package main.modelPackage;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class LikeModel {
     private int id;
+    private int postLiked;
+    private int likedBy;
     private Date date;
+    private String username;
+    private String postContent;
 
-    private PostModel post_liked;
+    // Getters and setters for all fields
+    public int getId() {
+        return id;
+    }
 
-    private UserModel liked_by;
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public LikeModel(Date date, PostModel post_liked, UserModel liked_by) {
-        setDate(date);
-        setPost_liked(post_liked);
-        setLiked_by(liked_by);
+    public int getPostLiked() {
+        return postLiked;
+    }
+
+    public void setPostLiked(int postLiked) {
+        this.postLiked = postLiked;
+    }
+
+    public int getLikedBy() {
+        return likedBy;
+    }
+
+    public void setLikedBy(int likedBy) {
+        this.likedBy = likedBy;
     }
 
     public Date getDate() {
         return date;
     }
+
     public void setDate(Date date) {
         this.date = date;
     }
-    public PostModel getPost_liked() {
-        return post_liked;
+
+    public String getUsername() {
+        return username;
     }
 
-    public void setPost_liked(PostModel post_liked) {
-        this.post_liked = post_liked;
+    public void setUsername(String username) {
+        this.username = username;
     }
-    public UserModel getLiked_by() {
-        return liked_by;
+
+    public String getPostContent() {
+        return postContent;
     }
-    public void setLiked_by(UserModel liked_by) {
-        this.liked_by = liked_by;
+
+    public void setPostContent(String postContent) {
+        this.postContent = postContent;
     }
 }
