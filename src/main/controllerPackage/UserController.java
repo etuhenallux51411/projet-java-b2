@@ -5,6 +5,8 @@ import main.dataAccessPackage.UserDAO;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.LocalityException;
 import main.exceptionPackage.UserCreationException;
+import main.exceptionPackage.UserResearchExecption;
+import main.exceptionPackage.UpdateUserException;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
 
@@ -27,12 +29,10 @@ public class UserController implements UserDAO {
     }
 
     @Override
-    public UserModel getUser(int id) {
-        return null;
-    }
+    public UserModel getUser(int id) throws UserResearchExecption {return userManager.getUser(id);}
 
     @Override
-    public Boolean updateUser(UserModel user) {
+    public Boolean updateUser(UserModel user) throws UpdateUserException {
         return userManager.updateUser(user);
     }
 
