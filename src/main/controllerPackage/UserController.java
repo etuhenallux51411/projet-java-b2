@@ -2,11 +2,7 @@ package main.controllerPackage;
 
 import main.businessPackage.UserManager;
 import main.dataAccessPackage.UserDAO;
-import main.exceptionPackage.ConnectionDataAccessException;
-import main.exceptionPackage.LocalityException;
-import main.exceptionPackage.UserCreationException;
-import main.exceptionPackage.UserResearchExecption;
-import main.exceptionPackage.UpdateUserException;
+import main.exceptionPackage.*;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
 
@@ -24,12 +20,12 @@ public class UserController implements UserDAO {
     }
 
     @Override
-    public List<UserModel> getAllUsers() {
+    public List<UserModel> getAllUsers() throws UserSearchException {
         return userManager.getAllUsers();
     }
 
     @Override
-    public UserModel getUser(int id) throws UserResearchExecption {return userManager.getUser(id);}
+    public UserModel getUser(int id) throws UserSearchException {return userManager.getUser(id);}
 
     @Override
     public Boolean updateUser(UserModel user) throws UpdateUserException {
@@ -45,7 +41,12 @@ public class UserController implements UserDAO {
     public List<LocalityModel> getLocality(String countryName) throws LocalityException {
         return userManager.getLocality(countryName);
     }
+
     public List<String> getColumnsNames() {
         return userManager.getColumnsNames();
+    }
+
+    public String getCountryNameByHome(int userId) throws CountriesDAOException {
+        return userManager.getCountryNameByHome(userId);
     }
 }

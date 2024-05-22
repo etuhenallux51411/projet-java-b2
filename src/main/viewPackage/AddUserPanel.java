@@ -12,8 +12,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import main.controllerPackage.CountriesController;
 import main.controllerPackage.UserController;
@@ -48,6 +46,9 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     private JComboBox<String> country;
     private JComboBox<String> gender;
     private Dimension textFieldSize = new JTextField(TEXT_FIELD_COLUMNS).getPreferredSize();
+    private UserModel oldUserData;
+    private enum typeOfInsert {ADD, UPDATE};
+    private typeOfInsert currentAction;
 
     private CountriesController countriesController;
     private UserController userController;
@@ -60,6 +61,8 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     public AddUserPanel(MainWindow mainWindow, UserModel user) throws CountriesDAOException, ConnectionDataAccessException, LocalityException {
         countriesController = new CountriesController();
         userController = new UserController();
+        oldUserData = user;
+        currentAction = oldUserData == null ? typeOfInsert.ADD : typeOfInsert.UPDATE;
 
         this.mainWindow = mainWindow;
 
@@ -67,7 +70,7 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(LABEL_PADDING, LABEL_PADDING, LABEL_PADDING, LABEL_PADDING);
 
-        topLabel = new JLabel(user == null ? "Création d'un utilisateur" : "Modification d'un utilisateur");
+        topLabel = new JLabel(currentAction == typeOfInsert.ADD ? "Création d'un utilisateur" : "Modification d'un utilisateur");
         gbc.gridx = 0;
         gbc.gridy = nbFields;
         gbc.gridwidth = 2;
@@ -109,13 +112,13 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
 
         addField(gbc, "Admin *", isAdmin = new JCheckBox());
 
-        submit = new JButton(user == null ? "Ajouter l'utilisateur" : "Modifier l'utilisateur");
+        submit = new JButton(currentAction == typeOfInsert.ADD ? "Ajouter l'utilisateur" : "Modifier l'utilisateur");
         submit.setPreferredSize(textFieldSize);
         submit.addActionListener(this);
         addField(gbc, "", submit);
 
-        if (user != null) {
-            populateFields(user);
+        if (currentAction == typeOfInsert.UPDATE) {
+            populateUserFields(user);
         }
 
         setVisible(true);
@@ -153,35 +156,15 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == submit) {
             if (validateForm()) {
-                UserModel user = new UserModel();
-                Date dob = new Date(dateOfBirthModel.getDate().getTime());
-
-                user.setEmail(email.getText());
-                user.setUsername(username.getText());
-                user.setPassword(new String(password.getPassword()));
-                user.setDateOfBirth(dob);
-
-                if (Objects.requireNonNull(gender.getSelectedItem()).equals(GENDER_MAN_STRING)) user.setGender('m');
-                else if (Objects.requireNonNull(gender.getSelectedItem()).equals(GENDER_WOMAN_STRING)) user.setGender('w');
-                else user.setGender('o');
-
-                user.setStreetAndNumber(street.getText());
-
-                if (phoneNumber.getText().isEmpty()) user.setPhoneNumber(null);
-                else user.setPhoneNumber(phoneNumber.getText());
-
-                if (bio.getText().isEmpty()) user.setBio(null);
-                else user.setBio(bio.getText());
-
-                user.setAdmin(isAdmin.isSelected());
-                user.setHome(((LocalityItem) zipCode.getSelectedItem()).getLocalityId());
+                UserModel newUser = createUserFromModel();
 
                 try {
-                    if (submit.getText().equals("Ajouter l'utilisateur")) {
-                        userController.createUser(user);
+                    if (currentAction == typeOfInsert.ADD) {
+                        userController.createUser(newUser);
                         mainWindow.displayMessage("Utilisateur créé avec succès", "Succès");
-                    } else {
-                        userController.updateUser(user);
+                    } else if (currentAction == typeOfInsert.UPDATE) {
+                        newUser.setId(oldUserData.getId());
+                        userController.updateUser(newUser);
                         mainWindow.displayMessage("Utilisateur modifié avec succès", "Succès");
                     }
                     mainWindow.switchPanel(mainWindow.getListingPanel());
@@ -191,6 +174,33 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
             }
         }
     }
+
+    private UserModel createUserFromModel() {
+        UserModel user = new UserModel();
+        Date dob = new Date(dateOfBirthModel.getDate().getTime());
+        
+        user.setEmail(email.getText());
+        user.setUsername(username.getText());
+        user.setPassword(new String(password.getPassword()));
+        user.setDateOfBirth(dob);
+
+        if (Objects.requireNonNull(gender.getSelectedItem()).equals(GENDER_MAN_STRING)) user.setGender('m');
+        else if (Objects.requireNonNull(gender.getSelectedItem()).equals(GENDER_WOMAN_STRING)) user.setGender('w');
+        else user.setGender('o');
+
+        user.setStreetAndNumber(street.getText());
+
+        if (phoneNumber.getText().isEmpty()) user.setPhoneNumber(null);
+        else user.setPhoneNumber(phoneNumber.getText());
+
+        if (bio.getText().isEmpty()) user.setBio(null);
+        else user.setBio(bio.getText());
+
+        user.setAdmin(isAdmin.isSelected());
+        user.setHome(((LocalityItem) Objects.requireNonNull(zipCode.getSelectedItem())).getLocalityId());
+        return user;
+    }
+
     private Boolean validateForm() {
         String emailText = email.getText();
         String usernameText = username.getText();
@@ -228,7 +238,10 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
             }
         }
     }
-    private void populateFields(UserModel user) {
+    private void populateUserFields(UserModel user) throws CountriesDAOException {
+        int homeId = user.getHome();
+        char userGender = user.getGender();
+
         email.setText(user.getEmail());
         username.setText(user.getUsername());
         password.setText(user.getPassword());
@@ -237,18 +250,14 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
         phoneNumber.setText(user.getPhoneNumber());
         bio.setText(user.getBio());
         isAdmin.setSelected(user.isAdmin());
-        gender.setSelectedItem(user.getGender() == 'm' ? GENDER_MAN_STRING : user.getGender() == 'w' ? GENDER_WOMAN_STRING : GENDER_OTHER_STRING);
+        gender.setSelectedItem(userGender == 'm' ? GENDER_MAN_STRING : userGender == 'w' ? GENDER_WOMAN_STRING : GENDER_OTHER_STRING);
+        country.setSelectedItem(userController.getCountryNameByHome(user.getId()));
 
-        try {
-            refreshLocalities();
-            for (int i = 0; i < zipCode.getItemCount(); i++) {
-                if (((LocalityItem) zipCode.getItemAt(i)).getLocalityId() == user.getHome()) {
-                    zipCode.setSelectedIndex(i);
-                    break;
-                }
+        for (int i = 0; i < zipCode.getItemCount(); i++) {
+            if (zipCode.getItemAt(i).getLocalityId() == homeId) {
+                zipCode.setSelectedIndex(i);
+                break;
             }
-        } catch (LocalityException | ConnectionDataAccessException ex) {
-            mainWindow.displayError(ex.toString());
         }
     }
 }

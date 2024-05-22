@@ -2,11 +2,7 @@ package main.businessPackage;
 
 import main.dataAccessPackage.UserDAO;
 import main.dataAccessPackage.UserDAOImpl;
-import main.exceptionPackage.ConnectionDataAccessException;
-import main.exceptionPackage.LocalityException;
-import main.exceptionPackage.UserCreationException;
-import main.exceptionPackage.UpdateUserException;
-import main.exceptionPackage.UserResearchExecption;
+import main.exceptionPackage.*;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
 import main.validatorPackage.FormValidator;
@@ -75,12 +71,12 @@ public class UserManager implements UserDAO {
     }
 
     @Override
-    public List<UserModel> getAllUsers() {
+    public List<UserModel> getAllUsers() throws UserSearchException {
         return userDAO.getAllUsers();
     }
 
     @Override
-    public UserModel getUser(int id) throws UserResearchExecption {return userDAO.getUser(id);}
+    public UserModel getUser(int id) throws UserSearchException {return userDAO.getUser(id);}
 
     public Boolean updateUser(UserModel user) throws UpdateUserException {
         return userDAO.updateUser(user);
@@ -95,7 +91,13 @@ public class UserManager implements UserDAO {
     public List<LocalityModel> getLocality(String countryName) throws LocalityException {
         return userDAO.getLocality(countryName);
     }
+
     public List<String> getColumnsNames() {
         return userDAO.getColumnsNames();
+    }
+
+    @Override
+    public String getCountryNameByHome(int userId) throws CountriesDAOException {
+        return userDAO.getCountryNameByHome(userId);
     }
 }

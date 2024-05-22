@@ -2,12 +2,11 @@ package main.viewPackage;
 
 import main.controllerPackage.UserController;
 import main.exceptionPackage.LocalityException;
-import main.exceptionPackage.UserResearchExecption;
+import main.exceptionPackage.UserSearchException;
 import main.modelPackage.ListingTableModel;
 import main.modelPackage.UserModel;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.CountriesDAOException;
-import main.exceptionPackage.UpdateUserException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -72,6 +71,7 @@ public class ListingPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == buttonAdd) {
             try {
+                // reset le panel d'ajout d'utilisateur
                 this.addUserPanel = new AddUserPanel(mainWindow);
                 mainWindow.switchPanel(addUserPanel);
             } catch (CountriesDAOException | ConnectionDataAccessException | LocalityException ex) {
@@ -87,14 +87,15 @@ public class ListingPanel extends JPanel implements ActionListener {
                 UserModel user;
                 try {
                     user = userController.getUser(userId);
-                } catch (UserResearchExecption ex) {
-                    throw new RuntimeException(ex);
+                    userController.deleteUser(user);
+                    if (userController.deleteUser(user)) {
+                        mainWindow.displayMessage("Utilisateur supprimé avec succès", "Suppression réussie");
+                    } else {
+                        mainWindow.displayError("Erreur lors de la suppression de l'utilisateur");
+                    }
                 }
-                userController.deleteUser(user);
-                if (userController.deleteUser(user)) {
-                    mainWindow.displayMessage("Utilisateur supprimé avec succès", "Suppression réussie");
-                }else {
-                    mainWindow.displayError("Erreur lors de la suppression de l'utilisateur");
+                catch (UserSearchException ex) {
+                    mainWindow.displayError(ex.toString());
                 }
                 refreshUsersData();
             }
@@ -105,13 +106,11 @@ public class ListingPanel extends JPanel implements ActionListener {
                 mainWindow.displayError("Veuillez sélectionner un utilisateur à modifier");
             } else {
                 int userId = (int) tableUsers.getValueAt(selectedRow, 0);
-                UserModel user;
                 try {
-                    user = userController.getUser(userId);
+                    UserModel user = userController.getUser(userId);
                     this.addUserPanel = new AddUserPanel(mainWindow, user);
                     mainWindow.switchPanel(addUserPanel);
-                    refreshUsersData();
-                } catch (UserResearchExecption | CountriesDAOException | ConnectionDataAccessException | LocalityException ex) {
+                } catch (UserSearchException | CountriesDAOException | ConnectionDataAccessException | LocalityException ex) {
                     mainWindow.displayError(ex.toString());
                 }
             }
@@ -119,9 +118,13 @@ public class ListingPanel extends JPanel implements ActionListener {
     }
 
     public void refreshUsersData() {
-        users = new ArrayList<>(userController.getAllUsers());
-        tableUsers = updateTable(users, columnNames);
-        scrollPane.setViewportView(tableUsers);
+        try {
+            users = new ArrayList<>(userController.getAllUsers());
+            tableUsers = updateTable(users, columnNames);
+            scrollPane.setViewportView(tableUsers);
+        } catch (UserSearchException e) {
+            mainWindow.displayError(e.toString());
+        }
     }
 
     public JTable updateTable(List<UserModel> users, List<String> columnsNames) {
