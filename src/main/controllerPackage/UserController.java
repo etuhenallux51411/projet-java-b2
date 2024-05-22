@@ -28,12 +28,12 @@ public class UserController implements UserDAO {
     public UserModel getUser(int id) throws UserSearchException {return userManager.getUser(id);}
 
     @Override
-    public Boolean updateUser(UserModel user) throws UpdateUserException {
-        return userManager.updateUser(user);
+    public void updateUser(UserModel user) throws UpdateUserException {
+        userManager.updateUser(user);
     }
 
     @Override
-    public Boolean deleteUser(UserModel user) {
+    public Boolean deleteUser(UserModel user) throws UserDeletionException {
         return userManager.deleteUser(user);
     }
 
@@ -42,7 +42,7 @@ public class UserController implements UserDAO {
         return userManager.getLocality(countryName);
     }
 
-    public List<String> getColumnsNames() {
+    public List<String> getColumnsNames() throws UserSearchException {
         return userManager.getColumnsNames();
     }
 

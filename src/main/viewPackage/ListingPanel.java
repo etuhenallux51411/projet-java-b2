@@ -1,12 +1,9 @@
 package main.viewPackage;
 
 import main.controllerPackage.UserController;
-import main.exceptionPackage.LocalityException;
-import main.exceptionPackage.UserSearchException;
+import main.exceptionPackage.*;
 import main.modelPackage.ListingTableModel;
 import main.modelPackage.UserModel;
-import main.exceptionPackage.ConnectionDataAccessException;
-import main.exceptionPackage.CountriesDAOException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -62,7 +59,11 @@ public class ListingPanel extends JPanel implements ActionListener {
 
         add(buttonPanel, BorderLayout.SOUTH);
 
-        columnNames = userController.getColumnsNames();
+        try {
+            columnNames = userController.getColumnsNames();
+        } catch (UserSearchException e) {
+            this.mainWindow.displayError(e.toString());
+        }
 
         setVisible(true);
     }
@@ -94,7 +95,7 @@ public class ListingPanel extends JPanel implements ActionListener {
                         mainWindow.displayError("Erreur lors de la suppression de l'utilisateur");
                     }
                 }
-                catch (UserSearchException ex) {
+                catch (UserSearchException | UserDeletionException ex) {
                     mainWindow.displayError(ex.toString());
                 }
                 refreshUsersData();

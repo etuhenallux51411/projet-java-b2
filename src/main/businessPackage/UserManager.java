@@ -5,7 +5,7 @@ import main.dataAccessPackage.UserDAOImpl;
 import main.exceptionPackage.*;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
-import main.validatorPackage.FormValidator;
+import main.utilPackage.FormValidator;
 
 import java.sql.Date;
 import java.util.List;
@@ -78,12 +78,16 @@ public class UserManager implements UserDAO {
     @Override
     public UserModel getUser(int id) throws UserSearchException {return userDAO.getUser(id);}
 
-    public Boolean updateUser(UserModel user) throws UpdateUserException {
-        return userDAO.updateUser(user);
+    public void updateUser(UserModel user) throws UpdateUserException {
+        try {
+            if (validUser(user)) userDAO.updateUser(user);
+        } catch (UserCreationException e) {
+            throw new UpdateUserException(e.getError());
+        }
     }
 
     @Override
-    public Boolean deleteUser(UserModel user) {
+    public Boolean deleteUser(UserModel user) throws UserDeletionException {
         return userDAO.deleteUser(user);
     }
 
@@ -92,7 +96,7 @@ public class UserManager implements UserDAO {
         return userDAO.getLocality(countryName);
     }
 
-    public List<String> getColumnsNames() {
+    public List<String> getColumnsNames() throws UserSearchException {
         return userDAO.getColumnsNames();
     }
 

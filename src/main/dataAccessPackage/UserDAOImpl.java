@@ -3,7 +3,9 @@ package main.dataAccessPackage;
 import main.exceptionPackage.*;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
+import main.utilPackage.Encryption;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,83 +22,70 @@ public class UserDAOImpl implements UserDAO  {
     @Override
     public void createUser(UserModel user) throws UserCreationException {
         try {
-            String sql = "INSERT INTO user " +
-                    "(email, username, password, date_of_birth, gender, created_at," +
-                    " street_and_number, phone_number, biography, is_admin, home)" +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setString(1, user.getEmail());
-            stmt.setString(2, user.getUsername());
-            stmt.setString(3, user.getPassword());
-            stmt.setDate(4, new Date(user.getDateOfBirth().getTime()));
-            stmt.setString(5, String.valueOf(user.getGender()));
-            stmt.setDate(6, new Date(System.currentTimeMillis()));
-            stmt.setString(7, user.getStreetAndNumber());
-
-            String phoneNumber = user.getPhoneNumber();
-            if (phoneNumber == null) stmt.setNull(8, Types.VARCHAR);
-            else stmt.setString(8, phoneNumber);
-
-            String bio = user.getBio();
-            if (bio == null) stmt.setNull(9, Types.VARCHAR);
-            else stmt.setString(9, bio);
-
-            stmt.setBoolean(10, user.isAdmin());
-            stmt.setInt(11, user.getHome());
-
-            int lines = stmt.executeUpdate();
+            int lines = userInsertionOrDeletion(user, true);
             if (lines == 0) throw new UserCreationException("L'utilisateur n'a pas pu être créé");
-        } catch (SQLException e) {
+        } catch (SQLException | NoSuchAlgorithmException e) {
             throw new UserCreationException(e.getMessage());
         }
     }
 
     @Override
-    public Boolean updateUser(UserModel user) throws UpdateUserException {
+    public void updateUser(UserModel user) throws UpdateUserException {
         try {
-            String sql = "UPDATE user SET " +
-                    "email = ?, username = ?, password = ?, date_of_birth = ?, gender = ?, " +
-                    "street_and_number = ?, phone_number = ?, biography = ?, is_admin = ?, home = ? " +
-                    "WHERE id = ?";
-
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setString(1, user.getEmail());
-            stmt.setString(2, user.getUsername());
-            stmt.setString(3, user.getPassword());
-            stmt.setDate(4, new Date(user.getDateOfBirth().getTime()));
-            stmt.setString(5, String.valueOf(user.getGender()));
-            stmt.setString(6, user.getStreetAndNumber());
-
-            String phoneNumber = user.getPhoneNumber();
-            if (phoneNumber == null) stmt.setNull(7, Types.VARCHAR);
-            else stmt.setString(7, phoneNumber);
-
-            String bio = user.getBio();
-            if (bio == null) stmt.setNull(8, Types.VARCHAR);
-            else stmt.setString(8, bio);
-
-            stmt.setBoolean(9, user.isAdmin());
-            stmt.setInt(10, user.getHome());
-            stmt.setInt(11, user.getId());
-
-            stmt.executeUpdate();
-
-            return true;
-        } catch (SQLException e) {
+            userInsertionOrDeletion(user, false);
+        } catch (SQLException | NoSuchAlgorithmException e) {
             throw new UpdateUserException(e.getMessage());
         }
     }
 
+    private int userInsertionOrDeletion(UserModel user, Boolean create) throws SQLException, NoSuchAlgorithmException {
+        String sqlInsert = "INSERT INTO user " +
+                "(email, username, password, date_of_birth, gender, street_and_number," +
+                " phone_number, biography, is_admin, home, created_at)" +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlUpdate = "UPDATE user SET " +
+                "email = ?, username = ?, password = ?, date_of_birth = ?, gender = ?, " +
+                "street_and_number = ?, phone_number = ?, biography = ?, is_admin = ?, home = ? " +
+                "WHERE id = ?";
+
+        PreparedStatement stmt = connection.prepareStatement(create ? sqlInsert : sqlUpdate);
+        stmt.setString(1, user.getEmail());
+        stmt.setString(2, user.getUsername());
+        stmt.setString(3, Encryption.createDBPassword(user.getPassword()));
+        stmt.setDate(4, new Date(user.getDateOfBirth().getTime()));
+        stmt.setString(5, String.valueOf(user.getGender()));
+        stmt.setString(6, user.getStreetAndNumber());
+
+        String phoneNumber = user.getPhoneNumber();
+        if (phoneNumber == null) stmt.setNull(7, Types.VARCHAR);
+        else stmt.setString(7, phoneNumber);
+
+        String bio = user.getBio();
+        if (bio == null) stmt.setNull(8, Types.VARCHAR);
+        else stmt.setString(8, bio);
+
+        stmt.setBoolean(9, user.isAdmin());
+        stmt.setInt(10, user.getHome());
+
+        if (create) {
+            stmt.setDate(11, new Date(System.currentTimeMillis()));
+        } else {
+            stmt.setInt(11, user.getId());
+        }
+
+        return stmt.executeUpdate();
+    }
+
     @Override
-    public Boolean deleteUser(UserModel user) {
-        try{
+    public Boolean deleteUser(UserModel user) throws UserDeletionException {
+        try {
+            if (user == null) throw new UserDeletionException("L'utilisateur n'existe pas");
             PreparedStatement ps = connection.prepareStatement("DELETE FROM user WHERE id = ?");
             ps.setInt(1, user.getId());
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
-            // TODO replace
-            throw new RuntimeException(e);
+            throw new UserDeletionException(e.getMessage());
         }
     }
 
@@ -112,7 +101,6 @@ public class UserDAOImpl implements UserDAO  {
             }
         } catch (SQLException e) {
             throw new UserSearchException(e.getMessage());
-            // TODO
         }
         return users;
     }
@@ -177,19 +165,18 @@ public class UserDAOImpl implements UserDAO  {
         return localities;
     }
 
-    public List<String> getColumnsNames() {
+    public List<String> getColumnsNames() throws UserSearchException {
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM user LIMIT 1");
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
+            ResultSetMetaData metadata = rs.getMetaData();
+            int columnCount = metadata.getColumnCount();
             columnNames = new ArrayList<>();
             for (int i = 1; i <= columnCount; i++) {
-                columnNames.add(rsmd.getColumnName(i));
+                columnNames.add(metadata.getColumnName(i));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            // TODO
+            throw new UserSearchException(e.getMessage());
         }
         return columnNames;
     }

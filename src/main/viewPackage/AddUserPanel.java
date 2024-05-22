@@ -18,7 +18,7 @@ import main.controllerPackage.UserController;
 import main.exceptionPackage.*;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
-import main.validatorPackage.FormValidator;
+import main.utilPackage.FormValidator;
 
 public class AddUserPanel extends JPanel implements ActionListener, ItemListener {
     private static final String GENDER_MAN_STRING = "Homme";
@@ -244,7 +244,6 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
 
         email.setText(user.getEmail());
         username.setText(user.getUsername());
-        password.setText(user.getPassword());
         dateOfBirthSpinner.setValue(user.getDateOfBirth());
         street.setText(user.getStreetAndNumber());
         phoneNumber.setText(user.getPhoneNumber());

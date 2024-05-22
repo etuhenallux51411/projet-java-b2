@@ -11,6 +11,10 @@ public class UserCreationException extends Exception {
         this.error = error;
     }
 
+    public String getError() {
+        return error;
+    }
+
     public String toString() {
         return "Erreur lors de la création de l'utilisateur : " + error;
     }
