@@ -5,20 +5,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import main.dataAccessPackage.ConnectionDataAccess;
 import main.exceptionPackage.ConnectionDataAccessException;
 
-public class ResearchPrivateMessage  extends JPanel{
+public class ResearchPrivateMessage  extends JPanel implements ActionListener {
     private JComboBox<String> privateMessageComboBox;
 
     private JButton searchButton;
     public ResearchPrivateMessage(){
-
-        JLabel welcomeText = new JLabel("Selectioner l'email d'untilisateur pour voir ses messages privés : ");
+        JLabel welcomeText = new JLabel("Selectioner l'email d'un utilisateur pour voir ses messages privés : ");
         welcomeText.setFont(new Font("Arial", Font.BOLD, 16));
         welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -32,7 +29,6 @@ public class ResearchPrivateMessage  extends JPanel{
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         add(welcomeText, gbc);
-
 
         // ComboBox
         try {
@@ -62,12 +58,17 @@ public class ResearchPrivateMessage  extends JPanel{
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(searchButton, gbc);
-
-        searchButton.addActionListener(e -> submit());
-
+        searchButton.addActionListener(this);
     }
     private void submit() {
         String community = (String) privateMessageComboBox.getSelectedItem();
-        System.out.println("Community selected: " + community);
+        System.out.println("dm selected: " + community);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == searchButton) {
+            submit();
+        }
     }
 }

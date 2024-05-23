@@ -13,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ResearchLike extends JPanel {
-
     private JSpinner startDateSpinner;
     private JSpinner endDateSpinner;
     private JButton submitButton;
@@ -21,10 +20,8 @@ public class ResearchLike extends JPanel {
     private LikeController likeController;
     private DefaultTableModel tableModel;
 
-    private List<LikeModel> likes;
-
     public ResearchLike() throws ConnectionDataAccessException {
-        JLabel welcomeText = new JLabel("Selectionner une plage de dates, pour trouver les likes entre ces dates :");
+        JLabel welcomeText = new JLabel("Selectionner une plage de dates pour trouver les likes entre ces dates :");
         welcomeText.setFont(new Font("Arial", Font.BOLD, 16));
         welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -67,7 +64,7 @@ public class ResearchLike extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         add(endDateSpinner, gbc);
 
-        submitButton = new JButton("Envoyer");
+        submitButton = new JButton("Rechercher");
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
@@ -95,7 +92,7 @@ public class ResearchLike extends JPanel {
         Date endDate = new Date(((java.util.Date) endDateSpinner.getValue()).getTime());
 
         try {
-            likes = likeController.getLikesBetween(startDate, endDate);
+            List<LikeModel> likes = likeController.getLikesBetween(startDate, endDate);
             tableModel.setRowCount(0);
             for (LikeModel like : likes) {
                 Object[] rowData = {
@@ -107,6 +104,7 @@ public class ResearchLike extends JPanel {
             }
         } catch (LikeSearchException e) {
             JOptionPane.showMessageDialog(this, e);
+            tableModel.setRowCount(0);
         }
     }
 }
