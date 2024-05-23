@@ -12,15 +12,13 @@ import java.util.List;
 import java.sql.*;
 
 public class PostDAOImpl implements PostDAO {
-
     private final Connection connection;
 
     public PostDAOImpl() throws ConnectionDataAccessException {
         connection = ConnectionDataAccess.getInstance();
     }
 
-
-    public List<PostModel> getsPost(int postId) throws PostSearchException {
+    public List<PostModel> getPosts(int postId) throws PostSearchException {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM post WHERE post_id = ?");
             preparedStatement.setInt(1, postId);

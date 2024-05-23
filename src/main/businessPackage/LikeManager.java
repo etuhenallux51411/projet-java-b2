@@ -1,7 +1,7 @@
 package main.businessPackage;
 
 import main.dataAccessPackage.LikeDAO;
-import main.dataAccessPackage.LikeDAOimpl;
+import main.dataAccessPackage.LikeDAOImpl;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.LikeSearchException;
 import main.modelPackage.LikeModel;
@@ -10,11 +10,10 @@ import java.sql.Date;
 import java.util.List;
 
 public class LikeManager implements LikeDAO {
-
     private LikeDAO likeDAO;
 
     public LikeManager() throws ConnectionDataAccessException {
-        likeDAO = new LikeDAOimpl();
+        setLikeDAO(new LikeDAOImpl());
     }
 
     public void setLikeDAO(LikeDAO likeDAO) {

@@ -15,7 +15,7 @@ public class PostController {
         postManager = new PostManager();
     }
 
-    public List<PostModel> getsPost(int postId) throws PostSearchException {
-        return postManager.getsPost(postId);
+    public List<PostModel> getPosts(int postId) throws PostSearchException {
+        return postManager.getPosts(postId);
     }
 }

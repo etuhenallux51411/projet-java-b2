@@ -1,6 +1,6 @@
 package main.exceptionPackage;
 
-public class LikeSearchException extends Exception{
+public class LikeSearchException extends Exception {
     private String error;
 
     public LikeSearchException(String e) {

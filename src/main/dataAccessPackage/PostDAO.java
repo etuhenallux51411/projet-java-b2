@@ -6,6 +6,5 @@ import main.modelPackage.PostModel;
 import java.util.List;
 
 public interface PostDAO {
-
-    public List<PostModel> getsPost(int postId) throws PostSearchException;
+    public List<PostModel> getPosts(int postId) throws PostSearchException;
 }

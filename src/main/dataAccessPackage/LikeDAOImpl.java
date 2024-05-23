@@ -9,22 +9,19 @@ import java.util.List;
 
 import java.sql.*;
 
-public class LikeDAOimpl implements LikeDAO {
-
+public class LikeDAOImpl implements LikeDAO {
     private final Connection connection;
 
-    private List<LikeModel> likes;
-
-    public LikeDAOimpl() throws ConnectionDataAccessException {
+    public LikeDAOImpl() throws ConnectionDataAccessException {
         connection = ConnectionDataAccess.getInstance();
     }
 
     public List<LikeModel> getLikesBetween(Date startDate, Date endDate) throws LikeSearchException {
-        likes = new ArrayList<>();
+        List<LikeModel> likes = new ArrayList<>();
         try
         {
             String sql = "SELECT l.id, l.date, u.username, p.text " +
-                    "FROM likes l " +
+                    "FROM social_network.like l " +
                     "JOIN user u ON l.liked_by = u.id " +
                     "JOIN post p ON l.post_liked = p.id " +
                     "WHERE l.date BETWEEN ? AND ?";
@@ -32,14 +29,18 @@ public class LikeDAOimpl implements LikeDAO {
             preparedStatement.setDate(1, startDate);
             preparedStatement.setDate(2, endDate);
             ResultSet resultSet = preparedStatement.executeQuery();
-                while (resultSet.next()) {
-                    LikeModel like = new LikeModel();
-                    like.setId(resultSet.getInt("id"));
-                    like.setDate(resultSet.getDate("date"));
-                    like.setUsername(resultSet.getString("username"));
-                    like.setPostContent(resultSet.getString("text"));
-                    likes.add(like);
-                }
+
+            while (resultSet.next()) {
+                LikeModel likeModel = new LikeModel();
+                likeModel.setId(resultSet.getInt("id"));
+                likeModel.setDate(resultSet.getDate("date"));
+                likeModel.setUsername(resultSet.getString("username"));
+                likeModel.setPostContent(resultSet.getString("text"));
+                likes.add(likeModel);
+            }
+
+            if (likes.isEmpty()) throw new LikeSearchException("Aucun like trouvé pour cette période.");
+
             return likes;
         } catch (SQLException e) {
             throw new LikeSearchException(e.getMessage());

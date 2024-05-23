@@ -9,7 +9,6 @@ import java.sql.Date;
 import java.util.List;
 
 public class LikeController {
-
     private LikeManager likeManager;
 
     public LikeController() throws ConnectionDataAccessException {
@@ -17,7 +16,6 @@ public class LikeController {
     }
 
     public List<LikeModel> getLikesBetween(Date startDate, Date endDate) throws LikeSearchException {
-        return likeManager.getLikesBetween( startDate, endDate);
+        return likeManager.getLikesBetween(startDate, endDate);
     }
-
 }

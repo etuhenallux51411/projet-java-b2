@@ -7,9 +7,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionDataAccess {
-    private static String URL = "jdbc:mysql://localhost:3306/social_network";
-    private static String USER = "root";
-    private static String PASSWORD = "test1234";
+    private static final String URL = "jdbc:mysql://localhost:3306/social_network";
+    private static final String USER = "root";
+    private static final String PASSWORD = "test1234";
     private static Connection connection;
 
     public static Connection getInstance() throws ConnectionDataAccessException {

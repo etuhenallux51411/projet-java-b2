@@ -6,8 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class ThreadPanel extends JPanel {
-    private JLabel likeLabel;
-    private ImageIcon likeIcon;
+    private final JLabel likeLabel;
     private static final int NORMAL_SIZE = 50;
     private static final int LARGE_SIZE = 100;
     private static final int ANIMATION_DURATION = 2000; // 2 seconds
@@ -18,7 +17,7 @@ public class ThreadPanel extends JPanel {
     public ThreadPanel() {
         setLayout(new BorderLayout());
 
-        likeIcon = new ImageIcon("src/main/assets/heart.png");
+        ImageIcon likeIcon = new ImageIcon("src/main/assets/heart.png");
         likeIcon.setImage(likeIcon.getImage().getScaledInstance(NORMAL_SIZE, NORMAL_SIZE, Image.SCALE_DEFAULT));
         likeLabel = new JLabel(likeIcon);
 
@@ -40,7 +39,7 @@ public class ThreadPanel extends JPanel {
         Timer shrinkTimer = new Timer(1000 / FRAME_RATE, null);
 
         enlargeTimer.addActionListener(e -> {
-            int elapsed = (int) ((Timer) e.getSource()).getInitialDelay();
+            int elapsed = ((Timer) e.getSource()).getInitialDelay();
             float progress = (float) elapsed / ANIMATION_DURATION;
             int newSize = (int) (NORMAL_SIZE + (LARGE_SIZE - NORMAL_SIZE) * progress);
             if (newSize > LARGE_SIZE) newSize = LARGE_SIZE;
@@ -57,7 +56,7 @@ public class ThreadPanel extends JPanel {
         });
 
         shrinkTimer.addActionListener(e -> {
-            int elapsed = (int) ((Timer) e.getSource()).getInitialDelay();
+            int elapsed = ((Timer) e.getSource()).getInitialDelay();
             float progress = (float) elapsed / ANIMATION_DURATION;
             int newSize = (int) (LARGE_SIZE - (LARGE_SIZE - NORMAL_SIZE) * progress);
             if (newSize < NORMAL_SIZE) newSize = NORMAL_SIZE;

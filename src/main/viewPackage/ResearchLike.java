@@ -46,7 +46,7 @@ public class ResearchLike extends JPanel {
         add(startDateLabel, gbc);
 
         startDateSpinner = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor startDateEditor = new JSpinner.DateEditor(startDateSpinner, "yyyy-MM-dd");
+        JSpinner.DateEditor startDateEditor = new JSpinner.DateEditor(startDateSpinner, "dd-MM-yyyy");
         startDateSpinner.setEditor(startDateEditor);
         gbc.gridx = 1;
         gbc.gridy = 1;
@@ -60,7 +60,7 @@ public class ResearchLike extends JPanel {
         add(endDateLabel, gbc);
 
         endDateSpinner = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor endDateEditor = new JSpinner.DateEditor(endDateSpinner, "yyyy-MM-dd");
+        JSpinner.DateEditor endDateEditor = new JSpinner.DateEditor(endDateSpinner, "dd-MM-yyyy");
         endDateSpinner.setEditor(endDateEditor);
         gbc.gridx = 1;
         gbc.gridy = 2;
@@ -96,18 +96,17 @@ public class ResearchLike extends JPanel {
 
         try {
             likes = likeController.getLikesBetween(startDate, endDate);
-            System.out.println(likes.size());
-            tableModel.setRowCount(0); // Clear existing rows
+            tableModel.setRowCount(0);
             for (LikeModel like : likes) {
                 Object[] rowData = {
-                        like.getUsername(),
-                        like.getDate(),
-                        like.getPostContent()
+                    like.getUsername(),
+                    like.getDate(),
+                    like.getPostContent()
                 };
                 tableModel.addRow(rowData);
             }
         } catch (LikeSearchException e) {
-            JOptionPane.showMessageDialog(this, "Erreur lors de la recherche des likes : " + e.getMessage());
+            JOptionPane.showMessageDialog(this, e);
         }
     }
 }
