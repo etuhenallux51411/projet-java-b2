@@ -23,4 +23,5 @@ public class LikeManager implements LikeDAO {
     public List<LikeModel> getLikesBetween(Date startDate, Date endDate) throws LikeSearchException {
         return likeDAO.getLikesBetween(startDate, endDate);
     }
+
 }
