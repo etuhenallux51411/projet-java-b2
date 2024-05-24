@@ -16,4 +16,6 @@ public class CountriesController {
     public List<String> getCountries() throws CountriesDAOException {
         return countriesManager.getCountries();
     }
+
+
 }

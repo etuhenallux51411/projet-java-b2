@@ -11,6 +11,7 @@ public class CountriesDAOImpl implements CountriesDAO {
     private Connection connection;
     private List<String> countries;
 
+
     public CountriesDAOImpl() throws ConnectionDataAccessException {
         connection = ConnectionDataAccess.getInstance();
     }
@@ -31,4 +32,5 @@ public class CountriesDAOImpl implements CountriesDAO {
         }
         return countries;
     }
+
 }
