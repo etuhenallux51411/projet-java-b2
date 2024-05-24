@@ -6,17 +6,22 @@ public class CommunityModel {
 
     private String name;
 
-    private UserModel creator;
+    private Integer creator;
 
 
 
 
-    public CommunityModel(int id, String name, UserModel creator) {
+    public CommunityModel(int id, String name, Integer creator) {
         this.id = id;
         this.name = name;
         this.creator = creator;
     }
 
+    public CommunityModel(){
+    }
+    public int getId() {
+        return id;
+    }
     public String getName() {
         return name;
     }
@@ -26,11 +31,15 @@ public class CommunityModel {
         this.name = name;
     }
 
-    public UserModel getCreator() {
+    public Integer getCreator() {
         return creator;
     }
 
-    public void setCreator(UserModel creator) {
+    public void setCreator(int creator) {
         this.creator = creator;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
