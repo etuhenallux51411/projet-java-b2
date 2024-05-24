@@ -85,7 +85,7 @@ public class MenuBar implements ActionListener {
         if (e.getSource() == home) {
             mainWindow.switchPanel(mainWindow.getHomePanel());
         } else if (e.getSource() == tacheMetier) {
-            mainWindow.switchPanel(mainWindow.getTacheMetierPanel());
+            mainWindow.switchPanel(mainWindow.getBusinessTaskPanel());
         }
         else if (e.getSource() == listing) {
             mainWindow.switchPanel(mainWindow.getListingPanel());

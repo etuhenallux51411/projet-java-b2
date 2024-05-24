@@ -3,22 +3,22 @@ package main.viewPackage;
 import main.controllerPackage.LikeController;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.LikeSearchException;
+import main.modelPackage.NonEditableTableModel;
 import main.modelPackage.LikeModel;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class ResearchLike extends JPanel {
+public class ResearchLike extends JPanel implements ActionListener {
     private JSpinner startDateSpinner;
     private JSpinner endDateSpinner;
     private JButton submitButton;
-    private JTable tableLikes;
     private LikeController likeController;
-    private DefaultTableModel tableModel;
+    private NonEditableTableModel tableModel;
 
     public ResearchLike() throws ConnectionDataAccessException {
         JLabel welcomeText = new JLabel("Selectionner une plage de dates pour trouver les likes entre ces dates :");
@@ -72,8 +72,8 @@ public class ResearchLike extends JPanel {
         add(submitButton, gbc);
 
         String[] columnNames = {"Nom de l'utilisateur", "Date du like", "Contenu de la publication"};
-        tableModel = new DefaultTableModel(columnNames, 0);
-        tableLikes = new JTable(tableModel);
+        tableModel = new NonEditableTableModel(columnNames, 0);
+        JTable tableLikes = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tableLikes);
         gbc.gridx = 0;
         gbc.gridy = 4;
@@ -84,7 +84,7 @@ public class ResearchLike extends JPanel {
         add(scrollPane, gbc);
 
         likeController = new LikeController();
-        submitButton.addActionListener(e -> submit());
+        submitButton.addActionListener(this);
     }
 
     private void submit() {
@@ -103,8 +103,16 @@ public class ResearchLike extends JPanel {
                 tableModel.addRow(rowData);
             }
         } catch (LikeSearchException e) {
-            JOptionPane.showMessageDialog(this, e);
+            MainWindow main = (MainWindow) SwingUtilities.getWindowAncestor(this);
+            main.displayError(e.toString());
             tableModel.setRowCount(0);
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == submitButton) {
+            submit();
         }
     }
 }

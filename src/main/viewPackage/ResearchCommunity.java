@@ -1,41 +1,28 @@
 package main.viewPackage;
-import javax.naming.CommunicationException;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
-
 import main.controllerPackage.CommunityController;
-import main.controllerPackage.UserController;
-import main.dataAccessPackage.ConnectionDataAccess;
-import main.exceptionPackage.CommunityException;
+import main.exceptionPackage.CommunityDAOException;
 import main.exceptionPackage.ConnectionDataAccessException;
-import main.exceptionPackage.UserSearchException;
 import main.modelPackage.CommunityModel;
+import main.modelPackage.NonEditableTableModel;
 import main.modelPackage.MemberModel;
-import main.modelPackage.UserModel;
 
 public class ResearchCommunity  extends JPanel implements ActionListener {
+    private MainWindow mainWindow;
     private JComboBox<String> communityComboBox;
-
     private CommunityController communityController;
-
-
     private DefaultTableModel tableModel;
+    private CommunityModel selectedCommunity;
 
-    private JTable tableUsers;
+    public ResearchCommunity(MainWindow mainWindow) throws ConnectionDataAccessException {
+        this.mainWindow = mainWindow;
 
-    private List<MemberModel> members;
-
-    private UserController userController;
-
-
-
-    public ResearchCommunity() throws ConnectionDataAccessException {
         JLabel welcomeText = new JLabel("Selectionner la commmunauté pour laquelle vous voulez voir les utilisateurs :");
         welcomeText.setFont(new Font("Arial", Font.BOLD, 16));
         welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -54,7 +41,6 @@ public class ResearchCommunity  extends JPanel implements ActionListener {
         communityController = new CommunityController();
         communityComboBox = new JComboBox<>();
 
-
         communityComboBox.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -62,34 +48,33 @@ public class ResearchCommunity  extends JPanel implements ActionListener {
         gbc.anchor = GridBagConstraints.CENTER;
         add(communityComboBox, gbc);
 
-
-
         String[] columnNames = {"Nom de l'utilisateur", "Rue et numéro ", "Ville", "Code postal", "Pays"};
-        tableModel = new DefaultTableModel(columnNames, 0);
-        tableUsers = new JTable(tableModel);
+        tableModel = new NonEditableTableModel(columnNames, 0);
+        JTable tableUsers = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tableUsers);
 
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
         add(scrollPane, gbc);
-        try {
-            List<CommunityModel> communities = communityController.getAllCommunities();
-            for (CommunityModel community : communities) {
-                communityComboBox.addItem(community.getName());
-            }
-        } catch (CommunicationException e) {
-            e.printStackTrace();
-        }
-        communityComboBox.addActionListener(this);
 
+        communityComboBox.addActionListener(this);
+    }
+
+    public void refreshComboBox() throws CommunityDAOException {
+        if (communityComboBox.getItemCount() > 0) communityComboBox.removeAllItems();
+
+        List<CommunityModel> communities = communityController.getAllCommunities();
+        for (CommunityModel community : communities) {
+            communityComboBox.addItem(community.getName());
+        }
+        communityComboBox.setSelectedIndex(0);
     }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == communityComboBox) {
             try {
                 String selectedCommunityName = (String) communityComboBox.getSelectedItem();
-                CommunityModel selectedCommunity = null;
 
                 for (CommunityModel community : communityController.getAllCommunities()) {
                     if (community.getName().equals(selectedCommunityName)) {
@@ -99,14 +84,13 @@ public class ResearchCommunity  extends JPanel implements ActionListener {
                 }
 
                 if (selectedCommunity == null) {
-                    JOptionPane.showMessageDialog(this, "Veuillez sélectionner une communauté valide");
+                    mainWindow.displayError("La communauté sélectionnée n'existe pas.");
                     return;
                 }
 
                 int communityId = selectedCommunity.getId();
-
                 tableModel.setRowCount(0);
-                members = communityController.getCommunityById(communityId);
+                List<MemberModel> members = communityController.getCommunityById(communityId);
 
                 for (MemberModel member : members) {
                     Object[] data = {
@@ -119,11 +103,9 @@ public class ResearchCommunity  extends JPanel implements ActionListener {
                     tableModel.addRow(data);
                 }
 
-            } catch (CommunicationException exception) {
-                JOptionPane.showMessageDialog(this, exception.getMessage());
-                tableModel.setRowCount(0);
+            } catch (CommunityDAOException exception) {
+                mainWindow.displayError(exception.toString());
             }
         }
     }
-
 }

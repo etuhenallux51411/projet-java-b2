@@ -1,11 +1,11 @@
 package main.controllerPackage;
 
 import main.businessPackage.CommunityManager;
+import main.exceptionPackage.CommunityDAOException;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.modelPackage.CommunityModel;
 import main.modelPackage.MemberModel;
 
-import javax.naming.CommunicationException;
 import java.util.List;
 
 public class CommunityController {
@@ -16,11 +16,11 @@ public class CommunityController {
         communityManager = new CommunityManager();
     }
 
-    public List<CommunityModel> getAllCommunities() throws CommunicationException {
+    public List<CommunityModel> getAllCommunities() throws CommunityDAOException {
         return communityManager.getAllCommunities();
     }
 
-    public List<MemberModel> getCommunityById(int id) throws CommunicationException {
+    public List<MemberModel> getCommunityById(int id) throws CommunityDAOException {
         return communityManager.getCommunityById(id);
     }
 }
