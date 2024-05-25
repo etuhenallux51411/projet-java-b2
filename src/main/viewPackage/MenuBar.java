@@ -10,12 +10,14 @@ public class MenuBar implements ActionListener {
     private JMenu menu;
     private JMenu menuCRUD;
     private JMenu menuResearch;
-    private JMenu menuTacheMetier;
+    private JMenu menuBusinessTask;
     private JMenu menuThread;
     private JMenuItem home;
     private JMenuItem listing;
     private JMenuItem exit;
-    private JMenuItem tacheMetier;
+    private JMenuItem JobTaskCountry;
+
+    private JMenuItem JobTaskAge;
     private JMenuItem researchLike;
     private JMenuItem researchCommunity;
     private JMenuItem researchPrivateMessage;
@@ -28,7 +30,7 @@ public class MenuBar implements ActionListener {
         menu = new JMenu("Menu");
         menuCRUD = new JMenu("CRUD");
         menuResearch = new JMenu("Recherches");
-        menuTacheMetier = new JMenu("Tâche métier");
+        menuBusinessTask = new JMenu("Tâche métier");
         menuThread = new JMenu("Thread");
 
         home = new JMenuItem("Retour à l'acceuil");
@@ -46,8 +48,11 @@ public class MenuBar implements ActionListener {
         researchPrivateMessage = new JMenuItem("Qui a envoyé un message privé à qui ?");
         researchPrivateMessage.addActionListener(this);
 
-        tacheMetier = new JMenuItem("Tâche métier");
-        tacheMetier.addActionListener(this);
+        JobTaskAge = new JMenuItem("Age moyen des utilisateurs");
+        JobTaskAge.addActionListener(this);
+
+        JobTaskCountry = new JMenuItem("Nombre d'utilisateurs par pays");
+        JobTaskCountry.addActionListener(this);
 
         likeAnimation = new JMenuItem("Animation de like (Thread)");
         likeAnimation.addActionListener(this);
@@ -67,14 +72,16 @@ public class MenuBar implements ActionListener {
         menuResearch.addSeparator();
         menuResearch.add(researchPrivateMessage);
 
-        menuTacheMetier.add(tacheMetier);
+        menuBusinessTask.add(JobTaskAge);
+        menuBusinessTask.addSeparator();
+        menuBusinessTask.add(JobTaskCountry);
 
         menuThread.add(likeAnimation);
 
         menuBar.add(menu);
         menuBar.add(menuCRUD);
         menuBar.add(menuResearch);
-        menuBar.add(menuTacheMetier);
+        menuBar.add(menuBusinessTask);
         menuBar.add(menuThread);
 
         this.mainWindow.setJMenuBar(menuBar);
@@ -84,8 +91,11 @@ public class MenuBar implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == home) {
             mainWindow.switchPanel(mainWindow.getHomePanel());
-        } else if (e.getSource() == tacheMetier) {
-            mainWindow.switchPanel(mainWindow.getTacheMetierPanel());
+        }   else if (e.getSource() == JobTaskCountry) {
+        mainWindow.switchPanel(mainWindow.getJobTaskAgePanel());
+        }
+        else if (e.getSource() == JobTaskAge) {
+        mainWindow.switchPanel(mainWindow.getJobTaskCountryPanel());
         }
         else if (e.getSource() == listing) {
             mainWindow.switchPanel(mainWindow.getListingPanel());

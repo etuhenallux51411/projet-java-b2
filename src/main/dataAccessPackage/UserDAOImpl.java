@@ -200,4 +200,54 @@ public class UserDAOImpl implements UserDAO  {
             throw new CountriesDAOException(e.getMessage());
         }
     }
+    public int numbUser() throws UserSearchException {
+        int count = 0;
+        try {
+            String sql = "SELECT COUNT(*) FROM user";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new UserSearchException(e.getMessage());
+        }
+        return count;
+    }
+
+    public List<UserModel> getUsersByCountry(String name) throws UserSearchException {
+        List<UserModel> users = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM user u " +
+                    "JOIN locality l ON u.home = l.code " +
+                    "JOIN country c ON l.localisation = c.id " +
+                    "WHERE c.name = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                users.add(fillUser(rs));
+            }
+        } catch (SQLException e) {
+            throw new UserSearchException(e.getMessage());
+        }
+        return users;
+    }
+
+    public List<UserModel> getUsersByAge(Date ageDebut , Date ageEnd) throws UserSearchException {
+        List<UserModel> users = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM user WHERE date_of_birth BETWEEN ? AND ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setDate(1, ageDebut);
+            stmt.setDate(2, ageEnd);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                users.add(fillUser(rs));
+            }
+        } catch (SQLException e) {
+            throw new UserSearchException(e.getMessage());
+        }
+        return users;
+    }
 }

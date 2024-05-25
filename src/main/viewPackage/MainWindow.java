@@ -1,10 +1,13 @@
 package main.viewPackage;
 
 import main.dataAccessPackage.ConnectionDataAccess;
+import main.exceptionPackage.CommunityDAOException;
 import main.exceptionPackage.ConnectionDataAccessException;
+import main.exceptionPackage.UserSearchException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class MainWindow extends JFrame {
     private static final String WINDOW_TITLE = "Social Network";
@@ -19,7 +22,9 @@ public class MainWindow extends JFrame {
     private JPanel researchPrivateMessage;
     private JPanel researchLike;
     private JPanel researchCommunity;
-    private JPanel tacheMetierPanel;
+
+    private JPanel jobTaskCountryPanel;
+    private JPanel jobTaskAgePanel;
     private JPanel threadPanel;
     private MenuBar menuBar;
 
@@ -33,11 +38,12 @@ public class MainWindow extends JFrame {
             ConnectionDataAccess.getInstance();
             listingPanel = new ListingPanel(this);
             homePanel = new HomePanel();
-            tacheMetierPanel = new TacheMetierPanel();
+            jobTaskCountryPanel = new JobTaskCountryPanel();
+            jobTaskAgePanel = new JobTaskAgePanel();
             menuBar = new MenuBar(this);
             researchPrivateMessage = new ResearchPrivateMessage();
             researchLike = new ResearchLike();
-            researchCommunity = new ResearchCommunity();
+            researchCommunity = new ResearchCommunity(this);
             threadPanel = new ThreadPanel();
         } catch (ConnectionDataAccessException e) {
             displayError(e.toString());
@@ -57,8 +63,32 @@ public class MainWindow extends JFrame {
     }
 
     public void switchPanel(JPanel panel) {
-        if (panel == listingPanel)
-            ((ListingPanel) listingPanel).refreshUsersData();
+        if (panel == listingPanel) {
+            try {
+                ((ListingPanel) listingPanel).refreshUsersData();
+                paintPanel(panel);
+            } catch (UserSearchException e) {
+                displayError(e.toString());
+            }
+        } else if (panel == researchCommunity) {
+            try {
+                ((ResearchCommunity) researchCommunity).refreshData();
+                paintPanel(panel);
+            } catch (CommunityDAOException e) {
+                displayError(e.toString());
+            }
+
+        } else if (panel == researchPrivateMessage) {
+            try {
+                ((ResearchPrivateMessage) researchPrivateMessage).refreshData();
+                paintPanel(panel);
+            } catch (UserSearchException e) {
+                displayError(e.toString());
+            }
+        } else paintPanel(panel);
+    }
+
+    private void paintPanel(JPanel panel) {
         getContentPane().removeAll();
         getContentPane().add(panel);
         revalidate();
@@ -73,8 +103,12 @@ public class MainWindow extends JFrame {
         return listingPanel;
     }
 
-    public JPanel getTacheMetierPanel() {
-        return tacheMetierPanel;
+    public JPanel getJobTaskAgePanel() {
+        return jobTaskAgePanel;
+    }
+
+    public JPanel getJobTaskCountryPanel() {
+        return jobTaskCountryPanel;
     }
 
     public JPanel getResearchPrivateMessage() {
