@@ -4,29 +4,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
+import java.sql.*;
+import java.util.ArrayList;
 
-import main.controllerPackage.DirectMessageController;
-import main.controllerPackage.UserController;
+import main.dataAccessPackage.ConnectionDataAccess;
 import main.exceptionPackage.ConnectionDataAccessException;
-import main.exceptionPackage.DirectMessageException;
-import main.exceptionPackage.UserSearchException;
-import main.modelPackage.DirectMessageModel;
-import main.modelPackage.LikeModel;
-import main.modelPackage.NonEditableTableModel;
-import main.modelPackage.UserModel;
 
 public class ResearchPrivateMessage  extends JPanel implements ActionListener {
-    private JComboBox<UserItem> privateMessageComboBox = new JComboBox<>();
+    private JComboBox<String> privateMessageComboBox;
+
     private JButton searchButton;
-    private NonEditableTableModel tableModel;
-    private UserController userController;
-    private DirectMessageController directMessageController;
-
-    public ResearchPrivateMessage() throws ConnectionDataAccessException {
-        userController = new UserController();
-        directMessageController = new DirectMessageController();
-
+    public ResearchPrivateMessage(){
         JLabel welcomeText = new JLabel("Selectioner l'email d'un utilisateur pour voir ses messages privés : ");
         welcomeText.setFont(new Font("Arial", Font.BOLD, 16));
         welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -42,74 +30,39 @@ public class ResearchPrivateMessage  extends JPanel implements ActionListener {
         gbc.gridwidth = 2;
         add(welcomeText, gbc);
 
-        privateMessageComboBox.setPreferredSize(new Dimension(200, 30));
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(privateMessageComboBox, gbc);
+        // ComboBox
+        try {
+            Connection connection = ConnectionDataAccess.getInstance();
+            String sqlInstruction = "SELECT email FROM user";
+            Statement preparedStatement = connection.createStatement();
+            ResultSet resultSet = preparedStatement.executeQuery(sqlInstruction);
+            ArrayList<String> communities = new ArrayList<>();
 
-        searchButton = new JButton("Rechercher");
+            while (resultSet.next()) {
+                communities.add(resultSet.getString("email"));
+            }
+            privateMessageComboBox = new JComboBox<>(communities.toArray(new String[0]));
+            privateMessageComboBox.setPreferredSize(new Dimension(200, 30));
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            add(privateMessageComboBox, gbc);
+        } catch (ConnectionDataAccessException | SQLException e) {
+            e.printStackTrace();
+            // TODO
+        }
+        searchButton = new JButton("Envoyer");
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(searchButton, gbc);
         searchButton.addActionListener(this);
-
-        String[] columnNames = {"Nom de l'envoyeur", "Text", "URL du media", "Type du media"};
-        tableModel = new NonEditableTableModel(columnNames, 0);
-        JTable tableDm = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(tableDm);
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        add(scrollPane, gbc);
     }
-
-    public void refreshData() throws UserSearchException {
-        privateMessageComboBox.removeAllItems();
-        resetRows();
-
-        List<UserModel> users = userController.getAllUsers();
-        for (UserModel user : users) {
-            privateMessageComboBox.addItem(new UserItem(user.getId(), user.getEmail()));
-        }
-    }
-
     private void submit() {
-        UserItem userSelected = (UserItem) privateMessageComboBox.getSelectedItem();
-
-        if (userSelected == null) {
-            return;
-        }
-
-        try {
-            List<DirectMessageModel> messages = directMessageController.getDirectMessagesByUserId(userSelected.getUserId());
-            resetRows();
-
-            for (DirectMessageModel message : messages) {
-                Object[] rowData = {
-                        message.getSender().getUsername(),
-                        message.getText(),
-                        message.getMediaUrl(),
-                        message.getMediaType()
-                };
-                tableModel.addRow(rowData);
-            }
-
-        } catch (DirectMessageException e) {
-            MainWindow mainWindow = (MainWindow) SwingUtilities.getWindowAncestor(this);
-            mainWindow.displayError(e.toString());
-            resetRows();
-        }
-    }
-
-    private void resetRows() {
-        tableModel.setRowCount(0);
+        String community = (String) privateMessageComboBox.getSelectedItem();
+        System.out.println("dm selected: " + community);
     }
 
     @Override

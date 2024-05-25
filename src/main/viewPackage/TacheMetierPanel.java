@@ -2,8 +2,8 @@ package main.viewPackage;
 
 import javax.swing.*;
 
-public class BusinessTaskPanel extends JPanel {
-    public BusinessTaskPanel() {
+public class TacheMetierPanel extends JPanel {
+    public TacheMetierPanel() {
         JLabel label = new JLabel("Tache Metier Panel");
         add(label);
     }

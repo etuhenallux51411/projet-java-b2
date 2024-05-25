@@ -1,24 +1,18 @@
 package main.modelPackage;
 
 public class MediaModel {
-    private Integer id;
+    private int id;
+
     private String url;
+
     private DirectMessageModel directMessage;
+
     private MediaTypeModel format;
 
-    public MediaModel(Integer id, String url, DirectMessageModel directMessage, MediaTypeModel format) {
-        setId(id);
-        setUrl(url);
-        setDirectMessage(directMessage);
-        setFormat(format);
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
+    public MediaModel(String url, DirectMessageModel directMessage, MediaTypeModel format) {
+        this.url = url;
+        this.directMessage = directMessage;
+        this.format = format;
     }
 
     public String getUrl() {
@@ -44,4 +38,7 @@ public class MediaModel {
     public void setFormat(MediaTypeModel format) {
         this.format = format;
     }
+
+
+
 }

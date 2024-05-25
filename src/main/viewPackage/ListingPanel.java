@@ -2,7 +2,7 @@ package main.viewPackage;
 
 import main.controllerPackage.UserController;
 import main.exceptionPackage.*;
-import main.modelPackage.NonEditableTableModel;
+import main.modelPackage.ListingTableModel;
 import main.modelPackage.UserModel;
 
 import javax.swing.*;
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListingPanel extends JPanel implements ActionListener {
+
     private MainWindow mainWindow;
     private JTable tableUsers;
     private ArrayList<UserModel> users;
@@ -22,8 +23,8 @@ public class ListingPanel extends JPanel implements ActionListener {
     private JButton buttonAdd;
     private JPanel addUserPanel;
     private JScrollPane scrollPane;
+
     private UserController userController;
-    private Boolean allDeleted = true;
 
     public ListingPanel(MainWindow mainWindow) throws ConnectionDataAccessException {
         this.mainWindow = mainWindow;
@@ -58,6 +59,12 @@ public class ListingPanel extends JPanel implements ActionListener {
 
         add(buttonPanel, BorderLayout.SOUTH);
 
+        try {
+            columnNames = userController.getColumnsNames();
+        } catch (UserSearchException e) {
+            this.mainWindow.displayError(e.toString());
+        }
+
         setVisible(true);
     }
 
@@ -73,36 +80,25 @@ public class ListingPanel extends JPanel implements ActionListener {
             }
         }
         else if (e.getSource() == buttonDelete) {
-            int[] selectedRows = tableUsers.getSelectedRows();
-            if (selectedRows.length == 0) {
-                mainWindow.displayError("Veuillez sélectionner un ou plusieurs utilisateurs à supprimer");
+            int selectedRow = tableUsers.getSelectedRow();
+            if (selectedRow == -1) {
+                mainWindow.displayError("Veuillez sélectionner un utilisateur à supprimer");
             } else {
+                int userId = (int) tableUsers.getValueAt(selectedRow, 0);
+                UserModel user;
                 try {
-                    if (!allDeleted) allDeleted = true;
-
-                    for (int selectedRow : selectedRows) {
-                        int userId = (int) tableUsers.getValueAt(selectedRow, 0);
-
-                        try {
-                            UserModel user = userController.getUser(userId);
-                            if (!userController.deleteUser(user)) {
-                                allDeleted = false;
-                                mainWindow.displayError("Erreur lors de la suppression de l'utilisateur avec l'ID: " + userId);
-                            }
-                        } catch (UserSearchException | UserDeletionException ex) {
-                            mainWindow.displayError(ex.toString());
-                            allDeleted = false;
-                        }
+                    user = userController.getUser(userId);
+                    userController.deleteUser(user);
+                    if (userController.deleteUser(user)) {
+                        mainWindow.displayMessage("Utilisateur supprimé avec succès", "Suppression réussie");
+                    } else {
+                        mainWindow.displayError("Erreur lors de la suppression de l'utilisateur");
                     }
-
-                    if (allDeleted) {
-                        mainWindow.displayMessage("Utilisateur(s) supprimé(s) avec succès", "Suppression réussie");
-                    }
-
-                    refreshUsersData();
-                } catch (UserSearchException ex) {
+                }
+                catch (UserSearchException | UserDeletionException ex) {
                     mainWindow.displayError(ex.toString());
                 }
+                refreshUsersData();
             }
         }
         else if (e.getSource() == buttonUpdate) {
@@ -122,11 +118,14 @@ public class ListingPanel extends JPanel implements ActionListener {
         }
     }
 
-    public void refreshUsersData() throws UserSearchException {
-        columnNames = userController.getColumnsNames();
-        users = new ArrayList<>(userController.getAllUsers());
-        tableUsers = updateTable(users, columnNames);
-        scrollPane.setViewportView(tableUsers);
+    public void refreshUsersData() {
+        try {
+            users = new ArrayList<>(userController.getAllUsers());
+            tableUsers = updateTable(users, columnNames);
+            scrollPane.setViewportView(tableUsers);
+        } catch (UserSearchException e) {
+            mainWindow.displayError(e.toString());
+        }
     }
 
     public JTable updateTable(List<UserModel> users, List<String> columnsNames) {
@@ -146,7 +145,7 @@ public class ListingPanel extends JPanel implements ActionListener {
             data[i][10] = user.isAdmin();
             data[i][11] = user.getHome();
         }
-        NonEditableTableModel model = new NonEditableTableModel(data, columnsNames.toArray());
+        ListingTableModel model = new ListingTableModel(data, columnsNames.toArray());
         return new JTable(model);
     }
 }

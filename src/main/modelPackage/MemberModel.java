@@ -1,25 +1,35 @@
 package main.modelPackage;
 
 public class MemberModel {
+
     private Integer community;
+
     private Integer user;
+
     private String username;
-    private String streetAndNumber;
-    private String locationName;
-    private int zipCode;
+
+    private String street_and_number;
+
+
+    private String location_name;
+
+
+    private int zip_code;
+
+
     private String country ;
+
 
     public MemberModel(Integer community, Integer user) {
         this.community = community;
         this.user = user;
     }
-
-    public MemberModel(String username, String streetAndNumber, String locationName, int zipCode, String country) {
-        setUsername(username);
-        setStreetAndNumber(streetAndNumber);
-        setLocationName(locationName);
-        setZipCode(zipCode);
-        setCountry(country);
+    public MemberModel( String username, String street_and_number, String location_name, int zip_code, String country) {
+        this.username = username;
+        this.street_and_number = street_and_number;
+        this.location_name = location_name;
+        this.zip_code = zip_code;
+        this.country = country;
     }
 
     public Integer getCommunity() {
@@ -47,27 +57,27 @@ public class MemberModel {
     }
 
     public String getStreetAndNumber() {
-        return streetAndNumber;
+        return street_and_number;
     }
 
-    public void setStreetAndNumber(String streetAndNumber) {
-        this.streetAndNumber = streetAndNumber;
+    public void setStreetAndNumber(String street_and_number) {
+        this.street_and_number = street_and_number;
     }
 
     public String getLocationName() {
-        return locationName;
+        return location_name;
     }
 
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
+    public void setLocationName(String location_name) {
+        this.location_name = location_name;
     }
 
     public int getZipCode() {
-        return zipCode;
+        return zip_code;
     }
 
-    public void setZipCode(int zipCode) {
-        this.zipCode = zipCode;
+    public void setZipCode(int zip_code) {
+        this.zip_code = zip_code;
     }
 
     public String getCountry() {
@@ -77,4 +87,6 @@ public class MemberModel {
     public void setCountry(String country) {
         this.country = country;
     }
+
+
 }

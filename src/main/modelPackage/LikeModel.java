@@ -10,13 +10,7 @@ public class LikeModel {
     private String username;
     private String postContent;
 
-    public LikeModel(int id, Date date, String username, String postContent) {
-        setId(id);
-        setDate(date);
-        setUsername(username);
-        setPostContent(postContent);
-    }
-
+    // Getters and setters for all fields
     public int getId() {
         return id;
     }

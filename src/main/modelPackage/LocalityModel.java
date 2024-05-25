@@ -12,8 +12,10 @@ public class LocalityModel {
         setName(name);
         setCity(city);
         setZipCode(zipCode);
-        setLocalisation(localisation);
+        setlocalisation(localisation);
     }
+
+    public LocalityModel() {}
 
     public int getCode() {
         return code;
@@ -47,11 +49,11 @@ public class LocalityModel {
         this.zipCode = zipCode;
     }
 
-    public int getLocalisation() {
+    public int getlocalisation() {
         return localisation;
     }
 
-    public void setLocalisation(int localisation) {
+    public void setlocalisation(int localisation) {
         this.localisation = localisation;
     }
 }

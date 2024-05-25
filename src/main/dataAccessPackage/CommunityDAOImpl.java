@@ -1,10 +1,11 @@
 package main.dataAccessPackage;
 
-import main.exceptionPackage.CommunityDAOException;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.modelPackage.CommunityModel;
 import main.modelPackage.MemberModel;
 
+
+import javax.naming.CommunicationException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,14 +13,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class CommunityDAOImpl implements CommunityDAO {
+
     private final Connection connection;
 
     public CommunityDAOImpl() throws ConnectionDataAccessException {
         connection = ConnectionDataAccess.getInstance();
     }
 
-    public List<CommunityModel> getAllCommunities() throws CommunityDAOException {
+    public List<CommunityModel> getAllCommunities() throws CommunicationException {
         List<CommunityModel> communities = new ArrayList<>();
         try {
             String sql = "SELECT * FROM community";
@@ -29,12 +32,12 @@ public class CommunityDAOImpl implements CommunityDAO {
                 communities.add(fillCommunity(rs));
             }
         } catch (SQLException e) {
-            throw new CommunityDAOException(e.getMessage());
+            throw new CommunicationException(e.getMessage());
         }
         return communities;
     }
 
-    public List<MemberModel> getCommunityById(int id) throws CommunityDAOException {
+    public List<MemberModel> getCommunityById(int id) throws CommunicationException {
         List<MemberModel> community = new ArrayList<>();
         try {
             String sql = "SELECT u.username, u.street_and_number, l.city, l.zip_code, p.name " +
@@ -50,10 +53,11 @@ public class CommunityDAOImpl implements CommunityDAO {
                 community.add(fillMember(rs));
             }
         } catch (SQLException e) {
-            throw new CommunityDAOException(e.getMessage());
+            throw new CommunicationException(e.getMessage());
         }
         return community;
     }
+
 
     private CommunityModel fillCommunity(ResultSet rs) throws SQLException {
        return new CommunityModel(

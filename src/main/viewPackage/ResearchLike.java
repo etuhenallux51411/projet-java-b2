@@ -3,26 +3,24 @@ package main.viewPackage;
 import main.controllerPackage.LikeController;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.LikeSearchException;
-import main.modelPackage.NonEditableTableModel;
 import main.modelPackage.LikeModel;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class ResearchLike extends JPanel implements ActionListener {
+public class ResearchLike extends JPanel {
     private JSpinner startDateSpinner;
     private JSpinner endDateSpinner;
     private JButton submitButton;
+    private JTable tableLikes;
     private LikeController likeController;
-    private NonEditableTableModel tableModel;
+    private DefaultTableModel tableModel;
 
     public ResearchLike() throws ConnectionDataAccessException {
-        likeController = new LikeController();
-
         JLabel welcomeText = new JLabel("Selectionner une plage de dates pour trouver les likes entre ces dates :");
         welcomeText.setFont(new Font("Arial", Font.BOLD, 16));
         welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -72,11 +70,10 @@ public class ResearchLike extends JPanel implements ActionListener {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(submitButton, gbc);
-        submitButton.addActionListener(this);
 
         String[] columnNames = {"Nom de l'utilisateur", "Date du like", "Contenu de la publication"};
-        tableModel = new NonEditableTableModel(columnNames, 0);
-        JTable tableLikes = new JTable(tableModel);
+        tableModel = new DefaultTableModel(columnNames, 0);
+        tableLikes = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tableLikes);
         gbc.gridx = 0;
         gbc.gridy = 4;
@@ -85,6 +82,9 @@ public class ResearchLike extends JPanel implements ActionListener {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         add(scrollPane, gbc);
+
+        likeController = new LikeController();
+        submitButton.addActionListener(e -> submit());
     }
 
     private void submit() {
@@ -93,7 +93,7 @@ public class ResearchLike extends JPanel implements ActionListener {
 
         try {
             List<LikeModel> likes = likeController.getLikesBetween(startDate, endDate);
-            resetRows();
+            tableModel.setRowCount(0);
             for (LikeModel like : likes) {
                 Object[] rowData = {
                     like.getUsername(),
@@ -103,20 +103,8 @@ public class ResearchLike extends JPanel implements ActionListener {
                 tableModel.addRow(rowData);
             }
         } catch (LikeSearchException e) {
-            MainWindow main = (MainWindow) SwingUtilities.getWindowAncestor(this);
-            main.displayError(e.toString());
-            resetRows();
-        }
-    }
-
-    private void resetRows() {
-        tableModel.setRowCount(0);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == submitButton) {
-            submit();
+            JOptionPane.showMessageDialog(this, e);
+            tableModel.setRowCount(0);
         }
     }
 }

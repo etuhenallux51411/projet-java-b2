@@ -2,18 +2,16 @@ package main.viewPackage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class ThreadPanel extends JPanel implements ActionListener, MouseListener {
+public class ThreadPanel extends JPanel {
     private final JLabel likeLabel;
     private static final int NORMAL_SIZE = 50;
-    private static final int LARGE_SIZE = 250;
-    private static final int ANIMATION_DURATION = 1000; // 3 secondes
-    private static final int FRAME_RATE = 30;
+    private static final int LARGE_SIZE = 100;
+    private static final int ANIMATION_DURATION = 2000; // 2 seconds
+    private static final int FRAME_RATE = 30; // 30 frames per second
 
-    private int newSize = NORMAL_SIZE;
-    private Timer enlargeTimer;
-    private Timer shrinkTimer;
     private boolean isAnimating = false;
 
     public ThreadPanel() {
@@ -25,31 +23,25 @@ public class ThreadPanel extends JPanel implements ActionListener, MouseListener
 
         add(likeLabel, BorderLayout.CENTER);
 
-        likeLabel.addMouseListener(this);
+        likeLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (!isAnimating) {
+                    isAnimating = true;
+                    animateHeart();
+                }
+            }
+        });
     }
 
     private void animateHeart() {
-        enlargeTimer = new Timer(1000 / FRAME_RATE, this);
-        shrinkTimer = new Timer(1000 / FRAME_RATE, this);
+        Timer enlargeTimer = new Timer(1000 / FRAME_RATE, null);
+        Timer shrinkTimer = new Timer(1000 / FRAME_RATE, null);
 
-        enlargeTimer.setInitialDelay(0);
-        enlargeTimer.start();
-    }
-
-    private void updateHeartSize(int size) {
-        ImageIcon resizedIcon = new ImageIcon("src/main/assets/heart.png");
-        resizedIcon.setImage(resizedIcon.getImage().getScaledInstance(size, size, Image.SCALE_DEFAULT));
-        likeLabel.setIcon(resizedIcon);
-        revalidate();
-        repaint();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == enlargeTimer) {
+        enlargeTimer.addActionListener(e -> {
             int elapsed = ((Timer) e.getSource()).getInitialDelay();
             float progress = (float) elapsed / ANIMATION_DURATION;
-            newSize = (int) (NORMAL_SIZE + (LARGE_SIZE - NORMAL_SIZE) * progress);
+            int newSize = (int) (NORMAL_SIZE + (LARGE_SIZE - NORMAL_SIZE) * progress);
             if (newSize > LARGE_SIZE) newSize = LARGE_SIZE;
 
             updateHeartSize(newSize);
@@ -61,10 +53,12 @@ public class ThreadPanel extends JPanel implements ActionListener, MouseListener
             } else {
                 enlargeTimer.setInitialDelay(elapsed + 1000 / FRAME_RATE);
             }
-        } else if (e.getSource() == shrinkTimer) {
+        });
+
+        shrinkTimer.addActionListener(e -> {
             int elapsed = ((Timer) e.getSource()).getInitialDelay();
             float progress = (float) elapsed / ANIMATION_DURATION;
-            newSize = (int) (LARGE_SIZE - (LARGE_SIZE - NORMAL_SIZE) * progress);
+            int newSize = (int) (LARGE_SIZE - (LARGE_SIZE - NORMAL_SIZE) * progress);
             if (newSize < NORMAL_SIZE) newSize = NORMAL_SIZE;
 
             updateHeartSize(newSize);
@@ -75,46 +69,17 @@ public class ThreadPanel extends JPanel implements ActionListener, MouseListener
             } else {
                 shrinkTimer.setInitialDelay(elapsed + 1000 / FRAME_RATE);
             }
-        }
+        });
+
+        enlargeTimer.setInitialDelay(0);
+        enlargeTimer.start();
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        int iconWidth = likeLabel.getIcon().getIconWidth();
-        int iconHeight = likeLabel.getIcon().getIconHeight();
-
-        int iconX = (likeLabel.getWidth() - iconWidth) / 2;
-        int iconY = (likeLabel.getHeight() - iconHeight) / 2;
-
-        int clickX = e.getX();
-        int clickY = e.getY();
-
-        if (clickX >= iconX && clickX <= iconX + iconWidth && clickY >= iconY && clickY <= iconY + iconHeight) {
-//            System.out.println("clicker");
-            if (!isAnimating) {
-                isAnimating = true;
-                animateHeart();
-            }
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
+    private void updateHeartSize(int size) {
+        ImageIcon resizedIcon = new ImageIcon("src/main/assets/heart.png");
+        resizedIcon.setImage(resizedIcon.getImage().getScaledInstance(size, size, Image.SCALE_DEFAULT));
+        likeLabel.setIcon(resizedIcon);
+        revalidate();
+        repaint();
     }
 }

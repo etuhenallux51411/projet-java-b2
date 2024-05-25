@@ -1,9 +1,10 @@
 package main.exceptionPackage;
 
-public class DirectMessageException extends Exception {
+public class CommunityException extends Exception{
+
     private String error;
 
-    public DirectMessageException(String e) {
+    public CommunityException(String e) {
         setError(e);
     }
 
@@ -12,6 +13,6 @@ public class DirectMessageException extends Exception {
     }
 
     public String toString() {
-        return "Erreur lors de la récupération des messages privés : " + error;
+        return "Erreur lors de la connexion : " + error;
     }
 }

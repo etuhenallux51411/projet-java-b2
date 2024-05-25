@@ -1,12 +1,14 @@
 package main.modelPackage;
 
 public class ReceiverModel {
+
     private DirectMessageModel directMessage;
+
     private UserModel user;
 
     public ReceiverModel(DirectMessageModel directMessage, UserModel user) {
-        setDirectMessage(directMessage);
-        setUser(user);
+        this.directMessage = directMessage;
+        this.user = user;
     }
 
     public DirectMessageModel getDirectMessage() {
