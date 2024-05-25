@@ -19,8 +19,7 @@ public class MainWindow extends JFrame {
     private JPanel researchPrivateMessage;
     private JPanel researchLike;
     private JPanel researchCommunity;
-    private JPanel jobTaskCountryPanel;
-    private JPanel jobTaskAgePanel;
+    private JPanel tacheMetierPanel;
     private JPanel threadPanel;
     private MenuBar menuBar;
 
@@ -34,8 +33,7 @@ public class MainWindow extends JFrame {
             ConnectionDataAccess.getInstance();
             listingPanel = new ListingPanel(this);
             homePanel = new HomePanel();
-            jobTaskCountryPanel = new JobTaskCountryPanel();
-            jobTaskAgePanel = new JobTaskAgePanel();
+            tacheMetierPanel = new TacheMetierPanel();
             menuBar = new MenuBar(this);
             researchPrivateMessage = new ResearchPrivateMessage();
             researchLike = new ResearchLike();
@@ -75,8 +73,9 @@ public class MainWindow extends JFrame {
         return listingPanel;
     }
 
-    public JPanel getJobTaskAgePanel() {return jobTaskCountryPanel ;}
-    public JPanel getJobTaskPanel() {return jobTaskAgePanel;}
+    public JPanel getTacheMetierPanel() {
+        return tacheMetierPanel;
+    }
 
     public JPanel getResearchPrivateMessage() {
         return researchPrivateMessage;

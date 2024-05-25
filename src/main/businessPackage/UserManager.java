@@ -104,10 +104,4 @@ public class UserManager implements UserDAO {
     public String getCountryNameByHome(int userId) throws CountriesDAOException {
         return userDAO.getCountryNameByHome(userId);
     }
-
-    public int numbUser() throws UserSearchException {return userDAO.numbUser();}
-
-    public List<UserModel> getUsersByCountry(String name) throws UserSearchException {
-        return userDAO.getUsersByCountry(name);
-    }
 }

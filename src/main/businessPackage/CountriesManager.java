@@ -21,5 +21,4 @@ public class CountriesManager {
     public List<String> getCountries() throws CountriesDAOException {
         return countriesDAO.getCountries();
     }
-
 }

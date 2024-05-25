@@ -49,10 +49,4 @@ public class UserController implements UserDAO {
     public String getCountryNameByHome(int userId) throws CountriesDAOException {
         return userManager.getCountryNameByHome(userId);
     }
-
-    public int numbUser() throws UserSearchException {return userManager.numbUser();}
-
-    public List<UserModel> getUsersByCountry(String name) throws UserSearchException {
-        return userManager.getUsersByCountry(name);
-    }
 }
