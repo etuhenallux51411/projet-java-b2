@@ -23,6 +23,7 @@ public class ListingPanel extends JPanel implements ActionListener {
     private JPanel addUserPanel;
     private JScrollPane scrollPane;
     private UserController userController;
+    private Boolean allDeleted = true;
 
     public ListingPanel(MainWindow mainWindow) throws ConnectionDataAccessException {
         this.mainWindow = mainWindow;
@@ -72,23 +73,34 @@ public class ListingPanel extends JPanel implements ActionListener {
             }
         }
         else if (e.getSource() == buttonDelete) {
-            int selectedRow = tableUsers.getSelectedRow();
-            if (selectedRow == -1) {
-                mainWindow.displayError("Veuillez sélectionner un utilisateur à supprimer");
+            int[] selectedRows = tableUsers.getSelectedRows();
+            if (selectedRows.length == 0) {
+                mainWindow.displayError("Veuillez sélectionner un ou plusieurs utilisateurs à supprimer");
             } else {
-                int userId = (int) tableUsers.getValueAt(selectedRow, 0);
-                UserModel user;
                 try {
-                    user = userController.getUser(userId);
-                    userController.deleteUser(user);
-                    if (userController.deleteUser(user)) {
-                        mainWindow.displayMessage("Utilisateur supprimé avec succès", "Suppression réussie");
-                    } else {
-                        mainWindow.displayError("Erreur lors de la suppression de l'utilisateur");
+                    if (!allDeleted) allDeleted = true;
+
+                    for (int selectedRow : selectedRows) {
+                        int userId = (int) tableUsers.getValueAt(selectedRow, 0);
+
+                        try {
+                            UserModel user = userController.getUser(userId);
+                            if (!userController.deleteUser(user)) {
+                                allDeleted = false;
+                                mainWindow.displayError("Erreur lors de la suppression de l'utilisateur avec l'ID: " + userId);
+                            }
+                        } catch (UserSearchException | UserDeletionException ex) {
+                            mainWindow.displayError(ex.toString());
+                            allDeleted = false;
+                        }
                     }
+
+                    if (allDeleted) {
+                        mainWindow.displayMessage("Utilisateur(s) supprimé(s) avec succès", "Suppression réussie");
+                    }
+
                     refreshUsersData();
-                }
-                catch (UserSearchException | UserDeletionException ex) {
+                } catch (UserSearchException ex) {
                     mainWindow.displayError(ex.toString());
                 }
             }

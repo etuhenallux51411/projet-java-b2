@@ -9,7 +9,6 @@ import main.modelPackage.MemberModel;
 import java.util.List;
 
 public class CommunityController {
-
     private CommunityManager communityManager;
 
     public CommunityController() throws ConnectionDataAccessException {

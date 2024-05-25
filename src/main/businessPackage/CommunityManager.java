@@ -6,12 +6,9 @@ import main.exceptionPackage.CommunityDAOException;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.modelPackage.CommunityModel;
 import main.modelPackage.MemberModel;
-
-
 import java.util.List;
 
 public class CommunityManager implements CommunityDAO {
-
     private CommunityDAO communityDAO;
 
     public CommunityManager() throws ConnectionDataAccessException {

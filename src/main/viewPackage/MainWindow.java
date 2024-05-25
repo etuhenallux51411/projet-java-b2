@@ -7,6 +7,7 @@ import main.exceptionPackage.UserSearchException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class MainWindow extends JFrame {
     private static final String WINDOW_TITLE = "Social Network";
@@ -68,9 +69,17 @@ public class MainWindow extends JFrame {
             }
         } else if (panel == researchCommunity) {
             try {
-                ((ResearchCommunity) researchCommunity).refreshComboBox();
+                ((ResearchCommunity) researchCommunity).refreshData();
                 paintPanel(panel);
             } catch (CommunityDAOException e) {
+                displayError(e.toString());
+            }
+
+        } else if (panel == researchPrivateMessage) {
+            try {
+                ((ResearchPrivateMessage) researchPrivateMessage).refreshData();
+                paintPanel(panel);
+            } catch (UserSearchException e) {
                 displayError(e.toString());
             }
         } else paintPanel(panel);

@@ -21,6 +21,8 @@ public class ResearchLike extends JPanel implements ActionListener {
     private NonEditableTableModel tableModel;
 
     public ResearchLike() throws ConnectionDataAccessException {
+        likeController = new LikeController();
+
         JLabel welcomeText = new JLabel("Selectionner une plage de dates pour trouver les likes entre ces dates :");
         welcomeText.setFont(new Font("Arial", Font.BOLD, 16));
         welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -70,6 +72,7 @@ public class ResearchLike extends JPanel implements ActionListener {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(submitButton, gbc);
+        submitButton.addActionListener(this);
 
         String[] columnNames = {"Nom de l'utilisateur", "Date du like", "Contenu de la publication"};
         tableModel = new NonEditableTableModel(columnNames, 0);
@@ -82,9 +85,6 @@ public class ResearchLike extends JPanel implements ActionListener {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         add(scrollPane, gbc);
-
-        likeController = new LikeController();
-        submitButton.addActionListener(this);
     }
 
     private void submit() {
@@ -93,7 +93,7 @@ public class ResearchLike extends JPanel implements ActionListener {
 
         try {
             List<LikeModel> likes = likeController.getLikesBetween(startDate, endDate);
-            tableModel.setRowCount(0);
+            resetRows();
             for (LikeModel like : likes) {
                 Object[] rowData = {
                     like.getUsername(),
@@ -105,8 +105,12 @@ public class ResearchLike extends JPanel implements ActionListener {
         } catch (LikeSearchException e) {
             MainWindow main = (MainWindow) SwingUtilities.getWindowAncestor(this);
             main.displayError(e.toString());
-            tableModel.setRowCount(0);
+            resetRows();
         }
+    }
+
+    private void resetRows() {
+        tableModel.setRowCount(0);
     }
 
     @Override

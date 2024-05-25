@@ -16,6 +16,7 @@ import main.modelPackage.MemberModel;
 public class ResearchCommunity  extends JPanel implements ActionListener {
     private MainWindow mainWindow;
     private JComboBox<String> communityComboBox;
+    private JButton submitButton;
     private CommunityController communityController;
     private DefaultTableModel tableModel;
     private CommunityModel selectedCommunity;
@@ -48,21 +49,30 @@ public class ResearchCommunity  extends JPanel implements ActionListener {
         gbc.anchor = GridBagConstraints.CENTER;
         add(communityComboBox, gbc);
 
-        String[] columnNames = {"Nom de l'utilisateur", "Rue et numéro ", "Ville", "Code postal", "Pays"};
-        tableModel = new NonEditableTableModel(columnNames, 0);
-        JTable tableUsers = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(tableUsers);
+        submitButton = new JButton("Rechercher");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(submitButton, gbc);
+        submitButton.addActionListener(this);
 
+        String[] columnNames = {"Nom de l'utilisateur", "Rue et numéro ", "Région", "Code postal", "Pays"};
+        tableModel = new NonEditableTableModel(columnNames, 0);
+        JTable tableDm = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tableDm);
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
         add(scrollPane, gbc);
-
-        communityComboBox.addActionListener(this);
     }
 
-    public void refreshComboBox() throws CommunityDAOException {
-        if (communityComboBox.getItemCount() > 0) communityComboBox.removeAllItems();
+    public void refreshData() throws CommunityDAOException {
+        communityComboBox.removeAllItems();
+        resetRows();
 
         List<CommunityModel> communities = communityController.getAllCommunities();
         for (CommunityModel community : communities) {
@@ -71,41 +81,49 @@ public class ResearchCommunity  extends JPanel implements ActionListener {
         communityComboBox.setSelectedIndex(0);
     }
 
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == communityComboBox) {
-            try {
-                String selectedCommunityName = (String) communityComboBox.getSelectedItem();
+    private void resetRows() {
+        tableModel.setRowCount(0);
+    }
 
-                for (CommunityModel community : communityController.getAllCommunities()) {
-                    if (community.getName().equals(selectedCommunityName)) {
-                        selectedCommunity = community;
-                        break;
-                    }
+    private void submit() {
+        try {
+            String selectedCommunityName = (String) communityComboBox.getSelectedItem();
+
+            for (CommunityModel community : communityController.getAllCommunities()) {
+                if (community.getName().equals(selectedCommunityName)) {
+                    selectedCommunity = community;
+                    break;
                 }
-
-                if (selectedCommunity == null) {
-                    mainWindow.displayError("La communauté sélectionnée n'existe pas.");
-                    return;
-                }
-
-                int communityId = selectedCommunity.getId();
-                tableModel.setRowCount(0);
-                List<MemberModel> members = communityController.getCommunityById(communityId);
-
-                for (MemberModel member : members) {
-                    Object[] data = {
-                            member.getUsername(),
-                            member.getStreetAndNumber(),
-                            member.getLocationName(),
-                            member.getZipCode(),
-                            member.getCountry()
-                    };
-                    tableModel.addRow(data);
-                }
-
-            } catch (CommunityDAOException exception) {
-                mainWindow.displayError(exception.toString());
             }
+
+            if (selectedCommunity == null) {
+                mainWindow.displayError("La communauté sélectionnée n'existe pas.");
+                return;
+            }
+
+            int communityId = selectedCommunity.getId();
+            resetRows();
+            List<MemberModel> members = communityController.getCommunityById(communityId);
+
+            for (MemberModel member : members) {
+                Object[] data = {
+                        member.getUsername(),
+                        member.getStreetAndNumber(),
+                        member.getLocationName(),
+                        member.getZipCode(),
+                        member.getCountry()
+                };
+                tableModel.addRow(data);
+            }
+
+        } catch (CommunityDAOException exception) {
+            mainWindow.displayError(exception.toString());
+        }
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == submitButton) {
+            submit();
         }
     }
 }

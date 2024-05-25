@@ -1,21 +1,28 @@
 package main.modelPackage;
 
 public class MediaTypeModel {
-
     private int id;
+    private String typeName;
 
-    private String type_name;
-
-    public MediaTypeModel( String type_name) {
-        this.type_name = type_name;
+    public MediaTypeModel(String typeName) {
+        setId(id);
+        setTypeName(typeName);
     }
 
-    public String getType_name() {
-        return type_name;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setType_name(String type_name) {
-        this.type_name = type_name;
+    public int getId() {
+        return id;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public String getTypeName() {
+        return typeName;
     }
 }
 
