@@ -4,7 +4,6 @@ import main.exceptionPackage.*;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
 
-import java.sql.Date;
 import java.util.List;
 
 public interface UserDAO {
@@ -16,8 +15,4 @@ public interface UserDAO {
     public List<LocalityModel> getLocality(String countryName) throws LocalityException;
     public List<String> getColumnsNames() throws UserSearchException;
     public String getCountryNameByHome(int id) throws CountriesDAOException;
-    public int numbUser() throws UserSearchException;
-    public List<UserModel> getUsersByCountry(String  name) throws UserSearchException;
-
-    public List<UserModel> getUsersByAge(Date ageDebut , Date ageEnd) throws UserSearchException;
 }

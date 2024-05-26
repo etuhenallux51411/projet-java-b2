@@ -22,7 +22,7 @@ public class UserDAOImpl implements UserDAO  {
     @Override
     public void createUser(UserModel user) throws UserCreationException {
         try {
-            int lines = userInsertionOrDeletion(user, true);
+            int lines = userInsertionOrUpdate(user, true);
             if (lines == 0) throw new UserCreationException("L'utilisateur n'a pas pu être créé");
         } catch (SQLException | NoSuchAlgorithmException e) {
             throw new UserCreationException(e.getMessage());
@@ -32,13 +32,13 @@ public class UserDAOImpl implements UserDAO  {
     @Override
     public void updateUser(UserModel user) throws UpdateUserException {
         try {
-            userInsertionOrDeletion(user, false);
+            userInsertionOrUpdate(user, false);
         } catch (SQLException | NoSuchAlgorithmException e) {
             throw new UpdateUserException(e.getMessage());
         }
     }
 
-    private int userInsertionOrDeletion(UserModel user, Boolean create) throws SQLException, NoSuchAlgorithmException {
+    private int userInsertionOrUpdate(UserModel user, Boolean create) throws SQLException, NoSuchAlgorithmException {
         String sqlInsert = "INSERT INTO user " +
                 "(email, username, password, date_of_birth, gender, street_and_number," +
                 " phone_number, biography, is_admin, home, created_at)" +
@@ -80,9 +80,11 @@ public class UserDAOImpl implements UserDAO  {
     public Boolean deleteUser(UserModel user) throws UserDeletionException {
         try {
             if (user == null) throw new UserDeletionException("L'utilisateur n'existe pas");
+
             PreparedStatement ps = connection.prepareStatement("DELETE FROM user WHERE id = ?");
             ps.setInt(1, user.getId());
             ps.executeUpdate();
+
             return true;
         } catch (SQLException e) {
             throw new UserDeletionException(e.getMessage());
@@ -91,18 +93,20 @@ public class UserDAOImpl implements UserDAO  {
 
     @Override
     public List<UserModel> getAllUsers() throws UserSearchException {
-        List<UserModel> users = new ArrayList<>();
         try {
             String sql = "SELECT * FROM user";
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
+
+            List<UserModel> users = new ArrayList<>();
             while (rs.next()) {
                 users.add(fillUser(rs));
             }
+
+            return users;
         } catch (SQLException e) {
             throw new UserSearchException(e.getMessage());
         }
-        return users;
     }
 
     @Override
@@ -199,55 +203,5 @@ public class UserDAOImpl implements UserDAO  {
         } catch (SQLException e) {
             throw new CountriesDAOException(e.getMessage());
         }
-    }
-    public int numbUser() throws UserSearchException {
-        int count = 0;
-        try {
-            String sql = "SELECT COUNT(*) FROM user";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            throw new UserSearchException(e.getMessage());
-        }
-        return count;
-    }
-
-    public List<UserModel> getUsersByCountry(String name) throws UserSearchException {
-        List<UserModel> users = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM user u " +
-                    "JOIN locality l ON u.home = l.code " +
-                    "JOIN country c ON l.localisation = c.id " +
-                    "WHERE c.name = ?";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setString(1, name);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                users.add(fillUser(rs));
-            }
-        } catch (SQLException e) {
-            throw new UserSearchException(e.getMessage());
-        }
-        return users;
-    }
-
-    public List<UserModel> getUsersByAge(Date ageDebut , Date ageEnd) throws UserSearchException {
-        List<UserModel> users = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM user WHERE date_of_birth BETWEEN ? AND ?";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setDate(1, ageDebut);
-            stmt.setDate(2, ageEnd);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                users.add(fillUser(rs));
-            }
-        } catch (SQLException e) {
-            throw new UserSearchException(e.getMessage());
-        }
-        return users;
     }
 }

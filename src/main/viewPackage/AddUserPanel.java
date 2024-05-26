@@ -136,20 +136,20 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
 
     private void refreshLocalities() throws LocalityException, ConnectionDataAccessException {
         List<LocalityModel> localities;
-            localities = userController.getLocality(Objects.requireNonNull(country.getSelectedItem()).toString());
-            zipCode.removeAllItems();
-            List<LocalityItem> formattedLocalities = new ArrayList<>();
-            if (localities.isEmpty()) {
-                formattedLocalities.add(new LocalityItem("Aucune localité trouvée", -1));
-            } else {
-                for (LocalityModel locality : localities) {
-                    formattedLocalities.add(new LocalityItem(locality.getCity() + " - " + locality.getZipCode(), locality.getCode()));
-                }
+        localities = userController.getLocality(Objects.requireNonNull(country.getSelectedItem()).toString());
+        zipCode.removeAllItems();
+        List<LocalityItem> formattedLocalities = new ArrayList<>();
+        if (localities.isEmpty()) {
+            formattedLocalities.add(new LocalityItem("Aucune localité trouvée", -1));
+        } else {
+            for (LocalityModel locality : localities) {
+                formattedLocalities.add(new LocalityItem(locality.getCity() + " - " + locality.getZipCode(), locality.getCode()));
             }
+        }
 
-            for (LocalityItem formattedLocality : formattedLocalities) {
-                zipCode.addItem(formattedLocality);
-            }
+        for (LocalityItem formattedLocality : formattedLocalities) {
+            zipCode.addItem(formattedLocality);
+        }
     }
 
     @Override
@@ -211,8 +211,33 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
 
         int localityId = selectedItem != null ? selectedItem.getLocalityId() : -1;
 
-        if (FormValidator.isOneStringEmpty(emailText, usernameText, passwordText, streetText) || localityId == -1) {
-            mainWindow.displayError("Tous les champs obligatoires doivent être remplis");
+//        if (FormValidator.isOneStringEmpty(emailText, usernameText, passwordText, streetText) || localityId == -1) {
+//            mainWindow.displayError("Tous les champs obligatoires doivent être remplis");
+//            return false;
+//        }
+
+        if (FormValidator.isOneStringEmpty(emailText)) {
+            mainWindow.displayError("L'email est obligatoire");
+            return false;
+        }
+
+        if (FormValidator.isOneStringEmpty(usernameText)) {
+            mainWindow.displayError("Le nom d'utilisateur est obligatoire");
+            return false;
+        }
+
+        if (FormValidator.isOneStringEmpty(passwordText)) {
+            mainWindow.displayError("Le mot de passe est obligatoire");
+            return false;
+        }
+
+        if (FormValidator.isOneStringEmpty(streetText)) {
+            mainWindow.displayError("La rue et le numéro sont obligatoires");
+            return false;
+        }
+
+        if (localityId == -1) {
+            mainWindow.displayError("Le code postal est obligatoire");
             return false;
         }
 

@@ -6,7 +6,6 @@ import main.exceptionPackage.*;
 import main.modelPackage.LocalityModel;
 import main.modelPackage.UserModel;
 
-import java.sql.Date;
 import java.util.List;
 
 public class UserController implements UserDAO {
@@ -26,9 +25,7 @@ public class UserController implements UserDAO {
     }
 
     @Override
-    public UserModel getUser(int id) throws UserSearchException {
-        return userManager.getUser(id);
-    }
+    public UserModel getUser(int id) throws UserSearchException {return userManager.getUser(id);}
 
     @Override
     public void updateUser(UserModel user) throws UpdateUserException {
@@ -52,18 +49,4 @@ public class UserController implements UserDAO {
     public String getCountryNameByHome(int userId) throws CountriesDAOException {
         return userManager.getCountryNameByHome(userId);
     }
-
-    public int numbUser() throws UserSearchException {
-        return userManager.numbUser();
-    }
-
-    public List<UserModel> getUsersByCountry(String name) throws UserSearchException {
-        return userManager.getUsersByCountry(name);
-    }
-
-    public List<UserModel> getUsersByAge(Date ageDebut, Date ageEnd) throws UserSearchException {
-        return userManager.getUsersByAge(ageDebut, ageEnd);
-    }
-
-
 }

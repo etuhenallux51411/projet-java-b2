@@ -15,9 +15,7 @@ public class MenuBar implements ActionListener {
     private JMenuItem home;
     private JMenuItem listing;
     private JMenuItem exit;
-    private JMenuItem JobTaskCountry;
-
-    private JMenuItem JobTaskAge;
+    private JMenuItem businessTask;
     private JMenuItem researchLike;
     private JMenuItem researchCommunity;
     private JMenuItem researchPrivateMessage;
@@ -48,11 +46,8 @@ public class MenuBar implements ActionListener {
         researchPrivateMessage = new JMenuItem("Qui a envoyé un message privé à qui ?");
         researchPrivateMessage.addActionListener(this);
 
-        JobTaskAge = new JMenuItem("Age moyen des utilisateurs");
-        JobTaskAge.addActionListener(this);
-
-        JobTaskCountry = new JMenuItem("Nombre d'utilisateurs par pays");
-        JobTaskCountry.addActionListener(this);
+        businessTask = new JMenuItem("Tâche métier");
+        businessTask.addActionListener(this);
 
         likeAnimation = new JMenuItem("Animation de like (Thread)");
         likeAnimation.addActionListener(this);
@@ -72,9 +67,7 @@ public class MenuBar implements ActionListener {
         menuResearch.addSeparator();
         menuResearch.add(researchPrivateMessage);
 
-        menuBusinessTask.add(JobTaskAge);
-        menuBusinessTask.addSeparator();
-        menuBusinessTask.add(JobTaskCountry);
+        menuBusinessTask.add(businessTask);
 
         menuThread.add(likeAnimation);
 
@@ -91,11 +84,8 @@ public class MenuBar implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == home) {
             mainWindow.switchPanel(mainWindow.getHomePanel());
-        }   else if (e.getSource() == JobTaskCountry) {
-        mainWindow.switchPanel(mainWindow.getJobTaskAgePanel());
-        }
-        else if (e.getSource() == JobTaskAge) {
-        mainWindow.switchPanel(mainWindow.getJobTaskCountryPanel());
+        } else if (e.getSource() == businessTask) {
+            mainWindow.switchPanel(mainWindow.getBusinessTaskPanel());
         }
         else if (e.getSource() == listing) {
             mainWindow.switchPanel(mainWindow.getListingPanel());

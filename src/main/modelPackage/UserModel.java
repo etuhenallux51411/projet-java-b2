@@ -32,6 +32,10 @@ public class UserModel {
         setHome(home);
     }
 
+    public UserModel(String username) {
+        setUsername(username);
+    }
+
     public UserModel() {}
 
     public int getId() {
