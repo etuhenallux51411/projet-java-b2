@@ -204,8 +204,7 @@ public class UserDAOImpl implements UserDAO  {
             throw new CountriesDAOException(e.getMessage());
         }
     }
-    public int numbUser() throws UserSearchException {
-        int count = 0;
+    public int nbUser() throws UserSearchException {
         try {
             String sql = "SELECT COUNT(*) FROM user";
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -216,7 +215,7 @@ public class UserDAOImpl implements UserDAO  {
         } catch (SQLException e) {
             throw new UserSearchException(e.getMessage());
         }
-        return count;
+        return 0;
     }
 
     public List<UserModel> getUsersByCountry(String name) throws UserSearchException {

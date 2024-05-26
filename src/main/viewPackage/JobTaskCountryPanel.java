@@ -16,9 +16,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class JobTaskCountryPanel extends JPanel implements ActionListener {
-
+    private MainWindow mainWindow;
     private JComboBox<String> countryComboBox;
     private JTable tableUsers;
+    private JButton submitButton;
     private double percentage;
     private CountriesController countriesController;
     private List<UserModel> users;
@@ -26,7 +27,10 @@ public class JobTaskCountryPanel extends JPanel implements ActionListener {
     private DefaultTableModel tableModel;
     private JLabel percentageLabel;
 
-    public JobTaskCountryPanel() throws ConnectionDataAccessException {
+    public JobTaskCountryPanel(MainWindow mainWindow) throws ConnectionDataAccessException {
+        this.mainWindow = mainWindow;
+        userController = new UserController();
+
         JLabel welcomeText = new JLabel("Selectionne un pays pour voir le pourcentage d'utilisateurs correspondant");
         welcomeText.setFont(new Font("Arial", Font.BOLD, 16));
         welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -46,15 +50,13 @@ public class JobTaskCountryPanel extends JPanel implements ActionListener {
         try {
             countryComboBox = new JComboBox<>(countriesController.getCountries().toArray(new String[0]));
         } catch (CountriesDAOException e) {
-            e.printStackTrace();
+            mainWindow.displayError(e.toString());
         }
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 2;
         add(countryComboBox, gbc);
-
-
-        userController = new UserController();
+        countryComboBox.addActionListener(this);
 
         String[] columnNames = {"Nom de l'utilisateur", "Email"};
         tableModel = new DefaultTableModel(columnNames, 0);
@@ -68,8 +70,6 @@ public class JobTaskCountryPanel extends JPanel implements ActionListener {
         gbc.weighty = 1.0;
         add(scrollPane, gbc);
 
-        userController = new UserController();
-
         percentageLabel = new JLabel("Pourcentage d'utilisateurs correspondant : ");
         percentageLabel.setFont(new Font("Arial", Font.BOLD, 12));
         percentageLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -81,37 +81,48 @@ public class JobTaskCountryPanel extends JPanel implements ActionListener {
         gbc.weighty = 0;
         add(percentageLabel, gbc);
 
-        countryComboBox.addActionListener(this);
+        submitButton = new JButton("Rechercher");
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(submitButton, gbc);
+        submitButton.addActionListener(this);
+    }
+
+    private void submit() {
+        try {
+            resetRows();
+
+            String selectedCountry = Objects.requireNonNull(countryComboBox.getSelectedItem()).toString();
+            users = userController.getUsersByCountry(selectedCountry);
+            if (users.isEmpty()) {
+                mainWindow.displayError("Aucun utilisateur trouvé");
+                percentageLabel.setText("Pourcentage d'utilisateurs correspondant : 0%");
+            } else {
+                for (UserModel user : users) {
+                    Object[] rowData = {
+                            user.getUsername(),
+                            user.getEmail(),
+                    };
+                    tableModel.addRow(rowData);
+                }
+                percentage = (double) users.size() / userController.nbUser() * 100;
+                percentageLabel.setText(String.format("Pourcentage d'utilisateurs correspondant : %.2f%%", percentage));
+            }
+        } catch (UserSearchException exception) {
+            mainWindow.displayError(exception.toString());
+            resetRows();
+        }
+    }
+
+    private void resetRows() {
+        tableModel.setRowCount(0);
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() != countryComboBox) {
-            JOptionPane.showMessageDialog(this, "Veuillez sélectionner un pays ");
-        } else {
-            try {
-                // Réinitialiser le modèle de table
-                tableModel.setRowCount(0);
-
-                String selectedCountry = Objects.requireNonNull(countryComboBox.getSelectedItem()).toString();
-                users = userController.getUsersByCountry(selectedCountry);
-                if (users.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Aucun utilisateur trouvé");
-                    percentageLabel.setText("Pourcentage d'utilisateurs correspondant : 0%");
-                } else {
-                    for (UserModel user : users) {
-                        Object[] rowData = {
-                                user.getUsername(),
-                                user.getEmail(),
-                        };
-                        tableModel.addRow(rowData);
-                    }
-                    percentage = (double) users.size() / userController.numbUser() * 100;
-                    percentageLabel.setText(String.format("Pourcentage d'utilisateurs correspondant : %.2f%%", percentage));
-                }
-            } catch (UserSearchException exception) {
-                JOptionPane.showMessageDialog(this, exception.getMessage());
-                tableModel.setRowCount(0);
-            }
+        if (e.getSource() == submitButton) {
+            submit();
         }
     }
 }

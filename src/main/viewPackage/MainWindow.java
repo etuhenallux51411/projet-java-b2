@@ -7,7 +7,6 @@ import main.exceptionPackage.UserSearchException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.SQLException;
 
 public class MainWindow extends JFrame {
     private static final String WINDOW_TITLE = "Social Network";
@@ -37,8 +36,8 @@ public class MainWindow extends JFrame {
             ConnectionDataAccess.getInstance();
             listingPanel = new ListingPanel(this);
             homePanel = new HomePanel();
-            jobTaskCountryPanel = new JobTaskCountryPanel();
-            jobTaskAgePanel = new JobTaskAgePanel();
+            jobTaskCountryPanel = new JobTaskCountryPanel(this);
+            jobTaskAgePanel = new JobTaskAgePanel(this);
             menuBar = new MenuBar(this);
             researchPrivateMessage = new ResearchPrivateMessage();
             researchLike = new ResearchLike();
