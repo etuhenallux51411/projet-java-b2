@@ -31,11 +31,12 @@ public class LikeDAOImpl implements LikeDAO {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                LikeModel likeModel = new LikeModel();
-                likeModel.setId(resultSet.getInt("id"));
-                likeModel.setDate(resultSet.getDate("date"));
-                likeModel.setUsername(resultSet.getString("username"));
-                likeModel.setPostContent(resultSet.getString("text"));
+                LikeModel likeModel = new LikeModel(
+                        resultSet.getInt("id"),
+                        resultSet.getDate("date"),
+                        resultSet.getString("username"),
+                        resultSet.getString("text")
+                );
                 likes.add(likeModel);
             }
 

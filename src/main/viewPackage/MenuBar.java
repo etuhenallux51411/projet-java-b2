@@ -16,7 +16,6 @@ public class MenuBar implements ActionListener {
     private JMenuItem listing;
     private JMenuItem exit;
     private JMenuItem JobTaskCountry;
-
     private JMenuItem JobTaskAge;
     private JMenuItem researchLike;
     private JMenuItem researchCommunity;
@@ -92,10 +91,10 @@ public class MenuBar implements ActionListener {
         if (e.getSource() == home) {
             mainWindow.switchPanel(mainWindow.getHomePanel());
         }   else if (e.getSource() == JobTaskCountry) {
-        mainWindow.switchPanel(mainWindow.getJobTaskAgePanel());
+            mainWindow.switchPanel(mainWindow.getJobTaskAgePanel());
         }
         else if (e.getSource() == JobTaskAge) {
-        mainWindow.switchPanel(mainWindow.getJobTaskCountryPanel());
+            mainWindow.switchPanel(mainWindow.getJobTaskCountryPanel());
         }
         else if (e.getSource() == listing) {
             mainWindow.switchPanel(mainWindow.getListingPanel());

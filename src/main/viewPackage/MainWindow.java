@@ -22,7 +22,6 @@ public class MainWindow extends JFrame {
     private JPanel researchPrivateMessage;
     private JPanel researchLike;
     private JPanel researchCommunity;
-
     private JPanel jobTaskCountryPanel;
     private JPanel jobTaskAgePanel;
     private JPanel threadPanel;
