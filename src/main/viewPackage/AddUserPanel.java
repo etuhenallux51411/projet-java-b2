@@ -179,22 +179,22 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
         UserModel user = new UserModel();
         Date dob = new Date(dateOfBirthModel.getDate().getTime());
         
-        user.setEmail(email.getText());
-        user.setUsername(username.getText());
-        user.setPassword(new String(password.getPassword()));
+        user.setEmail(email.getText().trim());
+        user.setUsername(username.getText().trim());
+        user.setPassword(new String(password.getPassword()).trim());
         user.setDateOfBirth(dob);
 
         if (Objects.requireNonNull(gender.getSelectedItem()).equals(GENDER_MAN_STRING)) user.setGender('m');
         else if (Objects.requireNonNull(gender.getSelectedItem()).equals(GENDER_WOMAN_STRING)) user.setGender('w');
         else user.setGender('o');
 
-        user.setStreetAndNumber(street.getText());
+        user.setStreetAndNumber(street.getText().trim());
 
-        if (phoneNumber.getText().isEmpty()) user.setPhoneNumber(null);
-        else user.setPhoneNumber(phoneNumber.getText());
+        if (phoneNumber.getText().trim().isEmpty()) user.setPhoneNumber(null);
+        else user.setPhoneNumber(phoneNumber.getText().trim());
 
-        if (bio.getText().isEmpty()) user.setBio(null);
-        else user.setBio(bio.getText());
+        if (bio.getText().trim().isEmpty()) user.setBio(null);
+        else user.setBio(bio.getText().trim());
 
         user.setAdmin(isAdmin.isSelected());
         user.setHome(((LocalityItem) Objects.requireNonNull(zipCode.getSelectedItem())).getLocalityId());
@@ -202,10 +202,10 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     }
 
     private Boolean validateForm() {
-        String emailText = email.getText();
-        String usernameText = username.getText();
-        String passwordText = new String(password.getPassword());
-        String streetText = street.getText();
+        String emailText = email.getText().trim();
+        String usernameText = username.getText().trim();
+        String passwordText = new String(password.getPassword()).trim();
+        String streetText = street.getText().trim();
         LocalityItem selectedItem = (LocalityItem) zipCode.getSelectedItem();
         LocalDate dob = dateOfBirthModel.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
