@@ -91,10 +91,10 @@ public class MenuBar implements ActionListener {
         if (e.getSource() == home) {
             mainWindow.switchPanel(mainWindow.getHomePanel());
         }   else if (e.getSource() == JobTaskCountry) {
-            mainWindow.switchPanel(mainWindow.getJobTaskCountryPanel());
+            mainWindow.switchPanel(mainWindow.getJobTaskAgePanel());
         }
         else if (e.getSource() == JobTaskAge) {
-            mainWindow.switchPanel(mainWindow.getJobTaskAgePanel());
+            mainWindow.switchPanel(mainWindow.getJobTaskCountryPanel());
         }
         else if (e.getSource() == listing) {
             mainWindow.switchPanel(mainWindow.getListingPanel());
