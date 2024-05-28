@@ -72,6 +72,7 @@ public class ListingPanel extends JPanel implements ActionListener {
         }
         else if (e.getSource() == buttonDelete) {
             int[] selectedRows = tableUsers.getSelectedRows();
+
             if (selectedRows.length == 0) {
                 mainWindow.displayError("Veuillez sélectionner un ou plusieurs utilisateurs à supprimer");
             } else {
@@ -85,6 +86,7 @@ public class ListingPanel extends JPanel implements ActionListener {
                     return;
 
                 try {
+                    // reset la variable si elle a déjà été utilisée
                     if (!allDeleted) allDeleted = true;
 
                     for (int selectedRow : selectedRows) {

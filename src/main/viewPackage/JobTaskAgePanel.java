@@ -10,9 +10,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 
 public class JobTaskAgePanel extends JPanel implements ActionListener {
@@ -30,9 +30,9 @@ public class JobTaskAgePanel extends JPanel implements ActionListener {
         this.mainWindow = mainWindow;
         userController = new UserController();
 
-        JLabel  title = new JLabel("Selectionne une tranche d'age pour voir le pourcentage d'utilisateurs correspondant :");
-         title.setFont(new Font("Arial", Font.BOLD, 16));
-         title.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel title = new JLabel("Sélectionne une tranche d'age pour voir le pourcentage d'utilisateurs correspondant :");
+        title.setFont(new Font("Arial", Font.BOLD, 16));
+        title.setHorizontalAlignment(SwingConstants.CENTER);
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -42,7 +42,7 @@ public class JobTaskAgePanel extends JPanel implements ActionListener {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        add( title, gbc);
+        add(title, gbc);
 
         userController = new UserController();
         ageComoboBox = new JComboBox<>();
@@ -93,7 +93,7 @@ public class JobTaskAgePanel extends JPanel implements ActionListener {
     private void submit() {
         try {
             resetRows();
-            Date[] dateRange = getDateRange((String) ageComoboBox.getSelectedItem());
+            Date[] dateRange = getDateRange((String) Objects.requireNonNull(ageComoboBox.getSelectedItem()));
             users = userController.getAllUsers();
             int count = 0;
             for (UserModel user : users) {

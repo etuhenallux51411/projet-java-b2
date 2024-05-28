@@ -27,14 +27,18 @@ public class UserDAOImpl implements UserDAO  {
     @Override
     public Boolean updateUser(UserModel user) throws UserCreationException {
         int updated = userInsertionOrUpdate(user, false);
-        return updated != 0;
+        if (updated == 0) throw new UserCreationException("L'utilisateur n'a pas pu être mis à jour");
+        return true;
     }
 
     private int userInsertionOrUpdate(UserModel user, Boolean create) throws UserCreationException {
+        // creation du user = creation de created_at
         String sqlInsert = "INSERT INTO user " +
                 "(email, username, password, date_of_birth, gender, street_and_number," +
                 " phone_number, biography, is_admin, home, created_at)" +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        // update du user = pas de modif de created_at
         String sqlUpdate = "UPDATE user SET " +
                 "email = ?, username = ?, password = ?, date_of_birth = ?, gender = ?, " +
                 "street_and_number = ?, phone_number = ?, biography = ?, is_admin = ?, home = ? " +
@@ -120,20 +124,26 @@ public class UserDAOImpl implements UserDAO  {
     }
 
     private UserModel fillUser(ResultSet rs) throws SQLException {
-        return new UserModel(
-                rs.getInt("id"),
-                rs.getString("email"),
-                rs.getString("username"),
-                rs.getString("password"),
-                rs.getDate("date_of_birth"),
-                rs.getString("gender").charAt(0),
-                rs.getDate("created_at"),
-                rs.getString("street_and_number"),
-                rs.getString("phone_number"),
-                rs.getString("biography"),
-                rs.getBoolean("is_admin"),
-                rs.getInt("home")
-        );
+        UserModel user = new UserModel();
+        user.setId(rs.getInt("id"));
+        user.setEmail(rs.getString("email"));
+        user.setUsername(rs.getString("username"));
+        user.setPassword(rs.getString("password"));
+        user.setDateOfBirth(rs.getDate("date_of_birth"));
+        user.setGender(rs.getString("gender").charAt(0));
+        user.setCreatedAt(rs.getDate("created_at"));
+        user.setStreetAndNumber(rs.getString("street_and_number"));
+        
+        if (rs.getString("phone_number") != null)
+            user.setPhoneNumber(rs.getString("phone_number"));
+
+        if (rs.getString("biography") != null)
+            user.setBio(rs.getString("biography"));
+
+        user.setAdmin(rs.getBoolean("is_admin"));
+        user.setHome(rs.getInt("home"));
+        
+        return user;
     }
 
     @Override
@@ -166,8 +176,8 @@ public class UserDAOImpl implements UserDAO  {
     public List<String> getColumnsNames() throws UserSearchException {
         List<String> columnNames;
         try {
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM user LIMIT 1");
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM user");
+            ResultSet rs = stmt.executeQuery();
             ResultSetMetaData metadata = rs.getMetaData();
             int columnCount = metadata.getColumnCount();
             columnNames = new ArrayList<>();
@@ -199,6 +209,7 @@ public class UserDAOImpl implements UserDAO  {
             throw new CountriesDAOException(e.getMessage());
         }
     }
+
     public int getNbUser() throws UserSearchException {
         try {
             String sql = "SELECT COUNT(*) FROM user";
@@ -232,13 +243,13 @@ public class UserDAOImpl implements UserDAO  {
         return users;
     }
 
-    public List<UserModel> getUsersByAge(Date ageDebut , Date ageEnd) throws UserSearchException {
+    public List<UserModel> getUsersByAge(Date startDateOfBirth , Date endDateOfBirth) throws UserSearchException {
         List<UserModel> users = new ArrayList<>();
         try {
             String sql = "SELECT * FROM user WHERE date_of_birth BETWEEN ? AND ?";
             PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setDate(1, ageDebut);
-            stmt.setDate(2, ageEnd);
+            stmt.setDate(1, startDateOfBirth);
+            stmt.setDate(2, endDateOfBirth);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 users.add(fillUser(rs));
@@ -247,5 +258,25 @@ public class UserDAOImpl implements UserDAO  {
             throw new UserSearchException(e.getMessage());
         }
         return users;
+    }
+
+    @Override
+    public Boolean login(int id, String email, String password) throws LoginException {
+        try {
+            String sql = "SELECT email, password FROM user WHERE id = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String storedEmail = rs.getString("email");
+                String storedPassword = rs.getString("password");
+                Boolean emailMatch = storedEmail.equals(email);
+                Boolean passwordMatch = Encryption.verifyPassword(password, storedPassword);
+                return emailMatch && passwordMatch;
+            }
+            return false;
+        } catch (SQLException | NoSuchAlgorithmException e) {
+            throw new LoginException(e.getMessage());
+        }
     }
 }

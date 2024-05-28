@@ -61,7 +61,12 @@ public class UserController implements UserDAO {
         return userManager.getUsersByCountry(name);
     }
 
-    public List<UserModel> getUsersByAge(Date ageDebut, Date ageEnd) throws UserSearchException {
-        return userManager.getUsersByAge(ageDebut, ageEnd);
+    public List<UserModel> getUsersByAge(Date startDateOfBirth, Date endDateOfBirth) throws UserSearchException {
+        return userManager.getUsersByAge(startDateOfBirth, endDateOfBirth);
+    }
+
+    @Override
+    public Boolean login(int id, String email, String password) throws LoginException {
+        return userManager.login(id, email, password);
     }
 }

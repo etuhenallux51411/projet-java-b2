@@ -18,6 +18,6 @@ public interface UserDAO {
     public String getCountryNameByHome(int id) throws CountriesDAOException;
     public int getNbUser() throws UserSearchException;
     public List<UserModel> getUsersByCountry(String  name) throws UserSearchException;
-
-    public List<UserModel> getUsersByAge(Date ageDebut , Date ageEnd) throws UserSearchException;
+    public List<UserModel> getUsersByAge(Date startDateOfBirth , Date endDateOfBirth) throws UserSearchException;
+    public Boolean login(int id, String email, String password) throws LoginException;
 }

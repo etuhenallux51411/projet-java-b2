@@ -37,10 +37,13 @@ public class UserManager implements UserDAO {
         Boolean isAdmin = user.isAdmin();
         Integer home = user.getHome();
 
-        if (FormValidator.isFieldNull(email) || FormValidator.isFieldNull(username)
-                || FormValidator.isFieldNull(password) || FormValidator.isFieldNull(dateOfBirth)
+        if (FormValidator.isFieldNull(email)
+                || FormValidator.isFieldNull(username)
+                || FormValidator.isFieldNull(password)
+                || FormValidator.isFieldNull(dateOfBirth)
                 || FormValidator.isFieldNull(gender)
-                || FormValidator.isFieldNull(streetAndNumber) || FormValidator.isFieldNull(isAdmin)
+                || FormValidator.isFieldNull(streetAndNumber)
+                || FormValidator.isFieldNull(isAdmin)
                 || FormValidator.isFieldNull(home))
             throw new UserCreationException("Un ou plusieurs champs sont nuls");
 
@@ -125,7 +128,12 @@ public class UserManager implements UserDAO {
         return userDAO.getUsersByCountry(name);
     }
 
-    public List<UserModel> getUsersByAge(Date ageDebut, Date ageEnd) throws UserSearchException {
-        return userDAO.getUsersByAge(ageDebut, ageEnd);
+    public List<UserModel> getUsersByAge(Date startDateOfBirth, Date endDateOfBirth) throws UserSearchException {
+        return userDAO.getUsersByAge(startDateOfBirth, endDateOfBirth);
+    }
+
+    @Override
+    public Boolean login(int id, String email, String password) throws LoginException {
+        return userDAO.login(id, email, password);
     }
 }

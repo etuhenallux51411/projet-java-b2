@@ -5,7 +5,6 @@ import main.dataAccessPackage.LikeDAOImpl;
 import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.LikeSearchException;
 import main.modelPackage.LikeModel;
-import main.utilPackage.FormValidator;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -31,5 +30,4 @@ public class LikeManager implements LikeDAO {
 
         return likeDAO.getLikesBetween(startDate, endDate);
     }
-
 }

@@ -25,6 +25,7 @@ public class LikeDAOImpl implements LikeDAO {
                     "JOIN user u ON l.liked_by = u.id " +
                     "JOIN post p ON l.post_liked = p.id " +
                     "WHERE l.date BETWEEN ? AND ?";
+
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setDate(1, startDate);
             preparedStatement.setDate(2, endDate);
@@ -41,7 +42,6 @@ public class LikeDAOImpl implements LikeDAO {
             }
 
             if (likes.isEmpty()) throw new LikeSearchException("Aucun like trouvé pour cette période.");
-
             return likes;
         } catch (SQLException e) {
             throw new LikeSearchException(e.getMessage());

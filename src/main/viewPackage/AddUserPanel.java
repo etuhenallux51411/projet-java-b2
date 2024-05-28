@@ -31,7 +31,6 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
 
     private MainWindow mainWindow;
     private int nbFields = 0;
-    private JLabel topLabel;
     private JTextField username;
     private JPasswordField password;
     private JTextField email;
@@ -45,12 +44,9 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     private JComboBox<LocalityItem> zipCode;
     private JComboBox<String> country;
     private JComboBox<String> gender;
-    private Dimension textFieldSize = new JTextField(TEXT_FIELD_COLUMNS).getPreferredSize();
     private UserModel oldUserData;
-    private enum typeOfInsert {ADD, UPDATE};
+    private enum typeOfInsert {ADD, UPDATE}
     private typeOfInsert currentAction;
-
-    private CountriesController countriesController;
     private UserController userController;
 
 
@@ -59,7 +55,7 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     }
 
     public AddUserPanel(MainWindow mainWindow, UserModel user) throws CountriesDAOException, ConnectionDataAccessException, LocalityException {
-        countriesController = new CountriesController();
+        CountriesController countriesController = new CountriesController();
         userController = new UserController();
         oldUserData = user;
         currentAction = oldUserData == null ? typeOfInsert.ADD : typeOfInsert.UPDATE;
@@ -70,7 +66,7 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(LABEL_PADDING, LABEL_PADDING, LABEL_PADDING, LABEL_PADDING);
 
-        topLabel = new JLabel(currentAction == typeOfInsert.ADD ? "Création d'un utilisateur" : "Modification d'un utilisateur");
+        JLabel topLabel = new JLabel(currentAction == typeOfInsert.ADD ? "Création d'un utilisateur" : "Modification d'un utilisateur");
         gbc.gridx = 0;
         gbc.gridy = nbFields;
         gbc.gridwidth = 2;
@@ -88,6 +84,7 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
         dateOfBirthModel = new SpinnerDateModel();
         dateOfBirthSpinner = new JSpinner(dateOfBirthModel);
         dateOfBirthSpinner.setEditor(new JSpinner.DateEditor(dateOfBirthSpinner, "dd/MM/yyyy"));
+        Dimension textFieldSize = new JTextField(TEXT_FIELD_COLUMNS).getPreferredSize();
         dateOfBirthSpinner.setPreferredSize(textFieldSize);
 
         addField(gbc, "Date de naissance *", dateOfBirthSpinner);
@@ -117,7 +114,7 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
         submit.addActionListener(this);
         addField(gbc, "", submit);
 
-        if (currentAction == typeOfInsert.UPDATE) {
+        if (currentAction == typeOfInsert.UPDATE && user != null) {
             populateUserFields(user);
         }
 
@@ -156,9 +153,9 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == submit) {
             if (validateForm()) {
-                UserModel newUser = createUserFromModel();
-
                 try {
+                    UserModel newUser = createUserFromModel();
+
                     if (currentAction == typeOfInsert.ADD) {
                         if (userController.getAllUsers().stream().anyMatch(user -> user.getEmail().equals(newUser.getEmail()))) {
                             mainWindow.displayError("Un utilisateur avec cet email existe déjà");
