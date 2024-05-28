@@ -12,7 +12,6 @@ import main.exceptionPackage.ConnectionDataAccessException;
 import main.exceptionPackage.DirectMessageException;
 import main.exceptionPackage.UserSearchException;
 import main.modelPackage.DirectMessageModel;
-import main.modelPackage.LikeModel;
 import main.modelPackage.NonEditableTableModel;
 import main.modelPackage.UserModel;
 
