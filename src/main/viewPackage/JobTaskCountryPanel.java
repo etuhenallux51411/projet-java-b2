@@ -97,7 +97,7 @@ public class JobTaskCountryPanel extends JPanel implements ActionListener {
             users = userController.getUsersByCountry(selectedCountry);
             if (users.isEmpty()) {
                 mainWindow.displayError("Aucun utilisateur trouvé");
-                percentageLabel.setText("Pourcentage d'utilisateurs correspondant : 0%");
+                resetPercentageText();
             } else {
                 for (UserModel user : users) {
                     Object[] rowData = {
@@ -110,9 +110,14 @@ public class JobTaskCountryPanel extends JPanel implements ActionListener {
                 percentageLabel.setText(String.format("Pourcentage d'utilisateurs venant de %s : %.2f%% (%d)", selectedCountry, percentage, users.size()));
             }
         } catch (UserSearchException exception) {
+            resetPercentageText();
             mainWindow.displayError(exception.toString());
             resetRows();
         }
+    }
+
+    private void resetPercentageText() {
+        percentageLabel.setText("Pourcentage d'utilisateurs correspondant : ");
     }
 
     private void resetRows() {

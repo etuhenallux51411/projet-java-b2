@@ -99,6 +99,7 @@ public class JobTaskAgePanel extends JPanel implements ActionListener {
             java.sql.Date endDate = new java.sql.Date(dateRange[0].getTime());
 
             users = userController.getUsersByAge(startDate, endDate);
+            int nbUsers = userController.getAllUsers().size();
             int count = 0;
             for (UserModel user : users) {
                 if (user.getDateOfBirth().before(dateRange[0]) && user.getDateOfBirth().after(dateRange[1])) {
@@ -106,9 +107,13 @@ public class JobTaskAgePanel extends JPanel implements ActionListener {
                     count++;
                 }
             }
-            percentage = (double) count / users.size() * 100;
+            percentage = (double) count / nbUsers * 100;
+            System.out.println(percentage);
+            System.out.println(count);
+            System.out.println(users.size());
             percentageLabel.setText("Pourcentage d'utilisateurs correspondant : %.2f%s".formatted(percentage, "%"));
         } catch (Exception ex) {
+            percentageLabel.setText("Pourcentage d'utilisateurs correspondant : ");
             mainWindow.displayError(ex.toString());
         }
     }
