@@ -125,10 +125,22 @@ public class UserManager implements UserDAO {
     }
 
     public List<UserModel> getUsersByCountry(String name) throws UserSearchException {
+        if (FormValidator.isFieldNull(name))
+            throw new UserSearchException("Le nom du pays est nul");
+
+        if (FormValidator.isOneStringEmpty(name))
+            throw new UserSearchException("Le nom du pays est vide");
+
         return userDAO.getUsersByCountry(name);
     }
 
     public List<UserModel> getUsersByAge(Date startDateOfBirth, Date endDateOfBirth) throws UserSearchException {
+        if (FormValidator.isFieldNull(startDateOfBirth) || FormValidator.isFieldNull(endDateOfBirth))
+            throw new UserSearchException("Les dates de naissance sont nulles");
+
+        if (!FormValidator.validDateOfBirth(startDateOfBirth.toLocalDate()) || !FormValidator.validDateOfBirth(endDateOfBirth.toLocalDate()))
+            throw new UserSearchException("Les dates de naissance ne sont pas valides");
+
         return userDAO.getUsersByAge(startDateOfBirth, endDateOfBirth);
     }
 
