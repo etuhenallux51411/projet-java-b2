@@ -16,8 +16,8 @@ public class UserController implements UserDAO {
         userManager = new UserManager();
     }
 
-    public void createUser(UserModel user) throws UserCreationException {
-        userManager.createUser(user);
+    public Boolean createUser(UserModel user) throws UserCreationException {
+        return userManager.createUser(user);
     }
 
     @Override
@@ -31,8 +31,8 @@ public class UserController implements UserDAO {
     }
 
     @Override
-    public void updateUser(UserModel user) throws UpdateUserException {
-        userManager.updateUser(user);
+    public Boolean updateUser(UserModel user) throws UpdateUserException, UserCreationException {
+        return userManager.updateUser(user);
     }
 
     @Override
@@ -53,8 +53,8 @@ public class UserController implements UserDAO {
         return userManager.getCountryNameByHome(userId);
     }
 
-    public int nbUser() throws UserSearchException {
-        return userManager.nbUser();
+    public int getNbUser() throws UserSearchException {
+        return userManager.getNbUser();
     }
 
     public List<UserModel> getUsersByCountry(String name) throws UserSearchException {
@@ -64,6 +64,4 @@ public class UserController implements UserDAO {
     public List<UserModel> getUsersByAge(Date ageDebut, Date ageEnd) throws UserSearchException {
         return userManager.getUsersByAge(ageDebut, ageEnd);
     }
-
-
 }

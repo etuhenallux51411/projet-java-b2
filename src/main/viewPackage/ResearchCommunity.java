@@ -78,7 +78,6 @@ public class ResearchCommunity  extends JPanel implements ActionListener {
         for (CommunityModel community : communities) {
             communityComboBox.addItem(community.getName());
         }
-        communityComboBox.setSelectedIndex(0);
     }
 
     private void resetRows() {

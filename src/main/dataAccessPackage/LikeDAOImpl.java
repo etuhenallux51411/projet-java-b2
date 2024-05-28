@@ -10,7 +10,7 @@ import java.util.List;
 import java.sql.*;
 
 public class LikeDAOImpl implements LikeDAO {
-    private final Connection connection;
+    private Connection connection;
 
     public LikeDAOImpl() throws ConnectionDataAccessException {
         connection = ConnectionDataAccess.getInstance();

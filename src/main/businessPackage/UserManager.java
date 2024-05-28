@@ -21,8 +21,8 @@ public class UserManager implements UserDAO {
         this.userDAO = dao;
     }
 
-    public void createUser(UserModel user) throws UserCreationException {
-        if (validUser(user)) userDAO.createUser(user);
+    public Boolean createUser(UserModel user) throws UserCreationException {
+        return validUser(user) ? userDAO.createUser(user) : false;
     }
 
     private Boolean validUser(UserModel user) throws UserCreationException {
@@ -36,6 +36,20 @@ public class UserManager implements UserDAO {
         String biography = user.getBio();
         Boolean isAdmin = user.isAdmin();
         Integer home = user.getHome();
+
+        if (FormValidator.isFieldNull(email) || FormValidator.isFieldNull(username)
+                || FormValidator.isFieldNull(password) || FormValidator.isFieldNull(dateOfBirth)
+                || FormValidator.isFieldNull(gender)
+                || FormValidator.isFieldNull(streetAndNumber) || FormValidator.isFieldNull(isAdmin)
+                || FormValidator.isFieldNull(home))
+            throw new UserCreationException("Un ou plusieurs champs sont nuls");
+
+        if (FormValidator.isOneStringEmpty(email, username, password, streetAndNumber))
+            throw new UserCreationException("Un ou plusieurs champs sont vides");
+
+        if (FormValidator.stringContainsSpace(email) || FormValidator.stringContainsSpace(username)
+                || FormValidator.stringContainsSpace(password))
+            throw new UserCreationException("Un ou plusieurs champs contiennent des espaces");
 
         if (!FormValidator.validStringLength(email, 1, 50))
             throw new UserCreationException("L'email doit être compris entre 1 et 50 caractères");
@@ -76,14 +90,12 @@ public class UserManager implements UserDAO {
     }
 
     @Override
-    public UserModel getUser(int id) throws UserSearchException {return userDAO.getUser(id);}
+    public UserModel getUser(int id) throws UserSearchException { 
+        return userDAO.getUser(id);
+    }
 
-    public void updateUser(UserModel user) throws UpdateUserException {
-        try {
-            if (validUser(user)) userDAO.updateUser(user);
-        } catch (UserCreationException e) {
-            throw new UpdateUserException(e.getError());
-        }
+    public Boolean updateUser(UserModel user) throws UpdateUserException, UserCreationException {
+        return validUser(user) ? userDAO.updateUser(user) : false;
     }
 
     @Override
@@ -105,7 +117,9 @@ public class UserManager implements UserDAO {
         return userDAO.getCountryNameByHome(userId);
     }
 
-    public int nbUser() throws UserSearchException {return userDAO.nbUser();}
+    public int getNbUser() throws UserSearchException {
+        return userDAO.getNbUser();
+    }
 
     public List<UserModel> getUsersByCountry(String name) throws UserSearchException {
         return userDAO.getUsersByCountry(name);

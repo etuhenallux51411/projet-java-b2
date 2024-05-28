@@ -26,7 +26,7 @@ public class DirectMessageDAOImpl implements DirectMessageDAO {
                     "JOIN media m on dm.id = m.attachment " +
                     "JOIN media_type mt on m.format = mt.id " +
                     "JOIN receiver r on dm.id = r.direct_message " +
-                    "JOIN user u on u.id = dm.sender " +
+                    "JOIN user u on u.id = r.user " +
                     "WHERE dm.sender = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, userId);

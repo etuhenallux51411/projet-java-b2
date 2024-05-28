@@ -11,34 +11,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAOImpl implements UserDAO  {
-    private final Connection connection;
-
-    private List<String> columnNames;
+    private Connection connection;
 
     public UserDAOImpl() throws ConnectionDataAccessException {
         connection = ConnectionDataAccess.getInstance();
     }
 
     @Override
-    public void createUser(UserModel user) throws UserCreationException {
-        try {
-            int lines = userInsertionOrUpdate(user, true);
-            if (lines == 0) throw new UserCreationException("L'utilisateur n'a pas pu être créé");
-        } catch (SQLException | NoSuchAlgorithmException e) {
-            throw new UserCreationException(e.getMessage());
-        }
+    public Boolean createUser(UserModel user) throws UserCreationException {
+        int lines = userInsertionOrUpdate(user, true);
+        if (lines == 0) throw new UserCreationException("L'utilisateur n'a pas pu être créé");
+        return true;
     }
 
     @Override
-    public void updateUser(UserModel user) throws UpdateUserException {
-        try {
-            userInsertionOrUpdate(user, false);
-        } catch (SQLException | NoSuchAlgorithmException e) {
-            throw new UpdateUserException(e.getMessage());
-        }
+    public Boolean updateUser(UserModel user) throws UserCreationException {
+        int updated = userInsertionOrUpdate(user, false);
+        return updated != 0;
     }
 
-    private int userInsertionOrUpdate(UserModel user, Boolean create) throws SQLException, NoSuchAlgorithmException {
+    private int userInsertionOrUpdate(UserModel user, Boolean create) throws UserCreationException {
         String sqlInsert = "INSERT INTO user " +
                 "(email, username, password, date_of_birth, gender, street_and_number," +
                 " phone_number, biography, is_admin, home, created_at)" +
@@ -47,33 +39,36 @@ public class UserDAOImpl implements UserDAO  {
                 "email = ?, username = ?, password = ?, date_of_birth = ?, gender = ?, " +
                 "street_and_number = ?, phone_number = ?, biography = ?, is_admin = ?, home = ? " +
                 "WHERE id = ?";
+        try {
+            PreparedStatement stmt = connection.prepareStatement(create ? sqlInsert : sqlUpdate);
+            stmt.setString(1, user.getEmail());
+            stmt.setString(2, user.getUsername());
+            stmt.setString(3, Encryption.createDBPassword(user.getPassword()));
+            stmt.setDate(4, new Date(user.getDateOfBirth().getTime()));
+            stmt.setString(5, String.valueOf(user.getGender()));
+            stmt.setString(6, user.getStreetAndNumber());
 
-        PreparedStatement stmt = connection.prepareStatement(create ? sqlInsert : sqlUpdate);
-        stmt.setString(1, user.getEmail());
-        stmt.setString(2, user.getUsername());
-        stmt.setString(3, Encryption.createDBPassword(user.getPassword()));
-        stmt.setDate(4, new Date(user.getDateOfBirth().getTime()));
-        stmt.setString(5, String.valueOf(user.getGender()));
-        stmt.setString(6, user.getStreetAndNumber());
+            String phoneNumber = user.getPhoneNumber();
+            if (phoneNumber == null) stmt.setNull(7, Types.VARCHAR);
+            else stmt.setString(7, phoneNumber);
 
-        String phoneNumber = user.getPhoneNumber();
-        if (phoneNumber == null) stmt.setNull(7, Types.VARCHAR);
-        else stmt.setString(7, phoneNumber);
+            String bio = user.getBio();
+            if (bio == null) stmt.setNull(8, Types.VARCHAR);
+            else stmt.setString(8, bio);
 
-        String bio = user.getBio();
-        if (bio == null) stmt.setNull(8, Types.VARCHAR);
-        else stmt.setString(8, bio);
+            stmt.setBoolean(9, user.isAdmin());
+            stmt.setInt(10, user.getHome());
 
-        stmt.setBoolean(9, user.isAdmin());
-        stmt.setInt(10, user.getHome());
+            if (create) {
+                stmt.setDate(11, new Date(System.currentTimeMillis()));
+            } else {
+                stmt.setInt(11, user.getId());
+            }
 
-        if (create) {
-            stmt.setDate(11, new Date(System.currentTimeMillis()));
-        } else {
-            stmt.setInt(11, user.getId());
+            return stmt.executeUpdate();
+        } catch (SQLException | NoSuchAlgorithmException e){
+            throw new UserCreationException(e.getMessage());
         }
-
-        return stmt.executeUpdate();
     }
 
     @Override
@@ -83,9 +78,8 @@ public class UserDAOImpl implements UserDAO  {
 
             PreparedStatement ps = connection.prepareStatement("DELETE FROM user WHERE id = ?");
             ps.setInt(1, user.getId());
-            ps.executeUpdate();
 
-            return true;
+            return ps.executeUpdate() != 0;
         } catch (SQLException e) {
             throw new UserDeletionException(e.getMessage());
         }
@@ -170,6 +164,7 @@ public class UserDAOImpl implements UserDAO  {
     }
 
     public List<String> getColumnsNames() throws UserSearchException {
+        List<String> columnNames;
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM user LIMIT 1");
@@ -204,7 +199,7 @@ public class UserDAOImpl implements UserDAO  {
             throw new CountriesDAOException(e.getMessage());
         }
     }
-    public int nbUser() throws UserSearchException {
+    public int getNbUser() throws UserSearchException {
         try {
             String sql = "SELECT COUNT(*) FROM user";
             PreparedStatement stmt = connection.prepareStatement(sql);

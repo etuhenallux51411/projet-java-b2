@@ -160,15 +160,44 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
 
                 try {
                     if (currentAction == typeOfInsert.ADD) {
-                        userController.createUser(newUser);
-                        mainWindow.displayMessage("Utilisateur créé avec succès", "Succès");
+                        if (userController.getAllUsers().stream().anyMatch(user -> user.getEmail().equals(newUser.getEmail()))) {
+                            mainWindow.displayError("Un utilisateur avec cet email existe déjà");
+                            return;
+                        }
+
+                        if (userController.getAllUsers().stream().anyMatch(user -> user.getUsername().equals(newUser.getUsername()))) {
+                            mainWindow.displayError("Un utilisateur avec ce nom d'utilisateur existe déjà");
+                            return;
+                        }
+
+                        if (userController.createUser(newUser))
+                            mainWindow.displayMessage("Utilisateur créé avec succès", "Succès");
+                        else
+                            mainWindow.displayError("Erreur lors de la création de l'utilisateur");
                     } else if (currentAction == typeOfInsert.UPDATE) {
+                        String oldEmail = oldUserData.getEmail();
+                        String newEmail = newUser.getEmail();
+                        String oldUsername = oldUserData.getUsername();
+                        String newUsername = newUser.getUsername();
+
+                        if (!oldEmail.equals(newEmail) && userController.getAllUsers().stream().anyMatch(user -> user.getEmail().equals(newEmail))) {
+                            mainWindow.displayError("Un utilisateur avec cet email existe déjà");
+                            return;
+                        }
+
+                        if (!oldUsername.equals(newUsername) && userController.getAllUsers().stream().anyMatch(user -> user.getUsername().equals(newUsername))) {
+                            mainWindow.displayError("Un utilisateur avec ce nom d'utilisateur existe déjà");
+                            return;
+                        }
+
                         newUser.setId(oldUserData.getId());
-                        userController.updateUser(newUser);
-                        mainWindow.displayMessage("Utilisateur modifié avec succès", "Succès");
+                        if (userController.updateUser(newUser))
+                            mainWindow.displayMessage("Utilisateur modifié avec succès", "Succès");
+                        else
+                            mainWindow.displayError("Erreur lors de la modification de l'utilisateur");
                     }
                     mainWindow.switchPanel(mainWindow.getListingPanel());
-                } catch (UserCreationException | UpdateUserException ex) {
+                } catch (UserCreationException | UpdateUserException | UserSearchException ex) {
                     mainWindow.displayError(ex.toString());
                 }
             }
@@ -205,6 +234,7 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
         String emailText = email.getText().trim();
         String usernameText = username.getText().trim();
         String passwordText = new String(password.getPassword()).trim();
+        String phoneNumberText = phoneNumber.getText().trim();
         String streetText = street.getText().trim();
         LocalityItem selectedItem = (LocalityItem) zipCode.getSelectedItem();
         LocalDate dob = dateOfBirthModel.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -243,6 +273,11 @@ public class AddUserPanel extends JPanel implements ActionListener, ItemListener
 
         if (!FormValidator.isValidEmail(emailText)) {
             mainWindow.displayError("L'email n'est pas valide (format : x@x.x)");
+            return false;
+        }
+
+        if (!FormValidator.isOneStringEmpty(phoneNumberText) && !FormValidator.isNumberValid(phoneNumberText)) {
+            mainWindow.displayError("Le numéro de téléphone n'est pas valide (chiffres uniquement)");
             return false;
         }
 

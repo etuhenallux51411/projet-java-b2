@@ -107,7 +107,7 @@ public class JobTaskCountryPanel extends JPanel implements ActionListener {
                     };
                     tableModel.addRow(rowData);
                 }
-                percentage = (double) users.size() / userController.nbUser() * 100;
+                percentage = (double) users.size() / userController.getNbUser() * 100;
                 percentageLabel.setText(String.format("Pourcentage d'utilisateurs venant de %s : %.2f%% (%d)", selectedCountry, percentage, users.size()));
             }
         } catch (UserSearchException exception) {

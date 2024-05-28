@@ -104,7 +104,7 @@ public class JobTaskAgePanel extends JPanel implements ActionListener {
                 }
             }
             percentage = (double) count / users.size() * 100;
-            percentageLabel.setText("Pourcentage d'utilisateurs correspondant : " + percentage + "%");
+            percentageLabel.setText("Pourcentage d'utilisateurs correspondant : %.2f%s".formatted(percentage, "%"));
         } catch (Exception ex) {
             mainWindow.displayError(ex.toString());
         }

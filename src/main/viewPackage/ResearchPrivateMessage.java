@@ -57,7 +57,7 @@ public class ResearchPrivateMessage  extends JPanel implements ActionListener {
         add(searchButton, gbc);
         searchButton.addActionListener(this);
 
-        String[] columnNames = {"Nom de l'envoyeur", "Text", "URL du media", "Type du media"};
+        String[] columnNames = {"Nom du receveur", "Text", "URL du media", "Type du media"};
         tableModel = new NonEditableTableModel(columnNames, 0);
         JTable tableDm = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tableDm);

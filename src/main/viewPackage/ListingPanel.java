@@ -77,6 +77,15 @@ public class ListingPanel extends JPanel implements ActionListener {
             if (selectedRows.length == 0) {
                 mainWindow.displayError("Veuillez sélectionner un ou plusieurs utilisateurs à supprimer");
             } else {
+                int result = JOptionPane.showConfirmDialog(mainWindow,
+                        "Êtes-vous sûr de vouloir supprimer cet utilisateur ? \n" +
+                                "Cette action supprimera tous les posts, communautés, messages " +
+                                "et likes associés à cet utilisateur.", "Confirmer la suppression",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (result != JOptionPane.YES_OPTION)
+                    return;
+
                 try {
                     if (!allDeleted) allDeleted = true;
 
