@@ -45,11 +45,21 @@ public class MainWindow extends JFrame {
             threadPanel = new ThreadPanel();
         } catch (ConnectionDataAccessException e) {
             displayError(e.toString());
-            System.exit(1);
+            exit();
         }
 
         switchPanel(homePanel);
         setVisible(true);
+    }
+
+    public void exit() {
+        try {
+            ConnectionDataAccess.closeConnection();
+            System.exit(1);
+        } catch (ConnectionDataAccessException ex) {
+            displayError(ex.toString());
+            System.exit(1);
+        }
     }
 
     public void displayError(String message) {

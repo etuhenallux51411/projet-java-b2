@@ -105,7 +105,7 @@ public class MenuBar implements ActionListener {
         } else if (e.getSource() == likeAnimation) {
             mainWindow.switchPanel(mainWindow.getThreadPanel());
         } else if (e.getSource() == exit) {
-            System.exit(0);
+            mainWindow.exit();
         }
     }
 }

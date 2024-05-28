@@ -27,20 +27,19 @@ public class ResearchPrivateMessage  extends JPanel implements ActionListener {
         userController = new UserController();
         directMessageController = new DirectMessageController();
 
-        JLabel welcomeText = new JLabel("Selectioner l'email d'un utilisateur pour voir ses messages privés : ");
-        welcomeText.setFont(new Font("Arial", Font.BOLD, 16));
-        welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel  title = new JLabel("Selectioner l'email d'un utilisateur pour voir ses messages privés : ");
+         title.setFont(new Font("Arial", Font.BOLD, 16));
+         title.setHorizontalAlignment(SwingConstants.CENTER);
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // titre
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        add(welcomeText, gbc);
+        add( title, gbc);
 
         privateMessageComboBox.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 0;

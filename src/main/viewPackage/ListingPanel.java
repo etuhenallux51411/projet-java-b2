@@ -35,12 +35,10 @@ public class ListingPanel extends JPanel implements ActionListener {
         gapPanel.setPreferredSize(new Dimension(0, 20)); // 20 pixels height gap
         add(gapPanel, BorderLayout.CENTER);
 
-        // Table in the center
         tableUsers = new JTable();
         scrollPane = new JScrollPane(tableUsers);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Buttons at the bottom
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 

@@ -30,9 +30,9 @@ public class JobTaskAgePanel extends JPanel implements ActionListener {
         this.mainWindow = mainWindow;
         userController = new UserController();
 
-        JLabel welcomeText = new JLabel("Selectionne une tranche d'age pour voir le pourcentage d'utilisateurs correspondant :");
-        welcomeText.setFont(new Font("Arial", Font.BOLD, 16));
-        welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel  title = new JLabel("Selectionne une tranche d'age pour voir le pourcentage d'utilisateurs correspondant :");
+         title.setFont(new Font("Arial", Font.BOLD, 16));
+         title.setHorizontalAlignment(SwingConstants.CENTER);
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -42,9 +42,8 @@ public class JobTaskAgePanel extends JPanel implements ActionListener {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        add(welcomeText, gbc);
+        add( title, gbc);
 
-        // ajouter les pays dans la comboBox
         userController = new UserController();
         ageComoboBox = new JComboBox<>();
         ageComoboBox.addItem("0-17");

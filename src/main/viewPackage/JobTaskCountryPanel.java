@@ -31,9 +31,9 @@ public class JobTaskCountryPanel extends JPanel implements ActionListener {
         this.mainWindow = mainWindow;
         userController = new UserController();
 
-        JLabel welcomeText = new JLabel("Selectionne un pays pour voir le pourcentage d'utilisateurs correspondant");
-        welcomeText.setFont(new Font("Arial", Font.BOLD, 16));
-        welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel  title = new JLabel("Selectionne un pays pour voir le pourcentage d'utilisateurs correspondant");
+         title.setFont(new Font("Arial", Font.BOLD, 16));
+         title.setHorizontalAlignment(SwingConstants.CENTER);
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -43,9 +43,8 @@ public class JobTaskCountryPanel extends JPanel implements ActionListener {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        add(welcomeText, gbc);
-
-        // ajouter les pays dans la comboBox
+        add( title, gbc);
+        
         countriesController = new CountriesController();
         try {
             countryComboBox = new JComboBox<>(countriesController.getCountries().toArray(new String[0]));
