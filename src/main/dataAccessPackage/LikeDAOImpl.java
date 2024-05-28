@@ -24,7 +24,7 @@ public class LikeDAOImpl implements LikeDAO {
                     "FROM social_network.like l " +
                     "JOIN user u ON l.liked_by = u.id " +
                     "JOIN post p ON l.post_liked = p.id " +
-                    "WHERE l.date BETWEEN ? AND ?";
+                    "WHERE l.date BETWEEN ? AND ? ORDER BY l.date DESC";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setDate(1, startDate);
