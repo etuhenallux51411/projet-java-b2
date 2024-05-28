@@ -21,4 +21,9 @@ public class CountriesManager {
     public List<String> getCountries() throws CountriesDAOException {
         return countriesDAO.getCountries();
     }
+
+    public Boolean countryExists(String country) throws CountriesDAOException {
+        List<String> countries = getCountries();
+        return countries.contains(country);
+    }
 }
