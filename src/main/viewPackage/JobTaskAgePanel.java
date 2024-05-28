@@ -94,7 +94,11 @@ public class JobTaskAgePanel extends JPanel implements ActionListener {
         try {
             resetRows();
             Date[] dateRange = getDateRange((String) Objects.requireNonNull(ageComoboBox.getSelectedItem()));
-            users = userController.getAllUsers();
+            // date range est inversé
+            java.sql.Date startDate = new java.sql.Date(dateRange[1].getTime());
+            java.sql.Date endDate = new java.sql.Date(dateRange[0].getTime());
+
+            users = userController.getUsersByAge(startDate, endDate);
             int count = 0;
             for (UserModel user : users) {
                 if (user.getDateOfBirth().before(dateRange[0]) && user.getDateOfBirth().after(dateRange[1])) {

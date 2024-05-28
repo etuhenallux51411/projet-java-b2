@@ -135,7 +135,7 @@ public class UserManager implements UserDAO {
         try {
             CountriesManager countriesManager = new CountriesManager();
             if (!countriesManager.countryExists(name))
-                throw new UserSearchException("Le pays n'existe pas");
+                throw new UserSearchException("Le pays " + name + " n'existe pas");
         } catch (ConnectionDataAccessException | CountriesDAOException e) {
             throw new UserSearchException(e.toString());
         }
@@ -144,6 +144,7 @@ public class UserManager implements UserDAO {
     }
 
     public List<UserModel> getUsersByAge(Date startDateOfBirth, Date endDateOfBirth) throws UserSearchException {
+        int MAX_USERS = 100;
         if (FormValidator.isFieldNull(startDateOfBirth) || FormValidator.isFieldNull(endDateOfBirth))
             throw new UserSearchException("Les dates de naissance sont nulles");
 
@@ -156,7 +157,15 @@ public class UserManager implements UserDAO {
         if (endDateOfBirth.toLocalDate().isAfter(Date.valueOf(LocalDate.now()).toLocalDate()))
             throw new UserSearchException("La date de fin ne peut pas être dans le futur");
 
-        return userDAO.getUsersByAge(startDateOfBirth, endDateOfBirth);
+        List<UserModel> users = userDAO.getUsersByAge(startDateOfBirth, endDateOfBirth);
+
+        if (users.isEmpty())
+            throw new UserSearchException("Aucun utilisateur trouvé");
+
+        if (users.size() > MAX_USERS)
+            throw new UserSearchException("Trop d'utilisateurs trouvés");
+
+        return users;
     }
 
     @Override

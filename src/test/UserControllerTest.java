@@ -33,6 +33,11 @@ class UserControllerTest {
     }
 
     @Test
+    void getUsersByCountry() throws UserSearchException {
+        assertNotNull(userController.getUsersByCountry("belgium"));
+    }
+
+    @Test
     void login() throws LoginException {
         assertTrue(userController.login(1, "test@test.com", "test1234"));
         System.out.println("Login successful");

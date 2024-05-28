@@ -24,6 +24,8 @@ public class CountriesManager {
 
     public Boolean countryExists(String country) throws CountriesDAOException {
         List<String> countries = getCountries();
-        return countries.contains(country);
+        countries.replaceAll(String::toLowerCase);
+
+        return countries.contains(country.toLowerCase());
     }
 }
